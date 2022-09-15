@@ -1,0 +1,15 @@
+#Python
+*.pyc
+__pycache__
+
+#datalogs
+*.xls
+*.xlsx
+*.csv
+
+
+#git created sometimes
+*.orig
+
+
+
