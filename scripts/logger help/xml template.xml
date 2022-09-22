@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<entry_timestamp>
+  <time>2020-03-31 00:01:52</time>
+  <error>True</error>
+  <error_msg>err_msg_here</error_msg>
+  <request_type>priceFetch/contractFetch/buy/sell</request_type>
+  <string>GET/accounts1586059192</string>
+  <signature>004cae60b45dd87f068142114c44262cc672718b128a555db01e0b34a99aa45e</signature>
+  <server_response_simplified>price/contracts/order details/etc</server_response_simplified>
+  <server_response>long response</server_response>
+</entry_timestamp>
+<entry_timestamp2>
+  <time>2020-03-31 00:01:52</time>
+  <error>True</error>
+  <error_msg>err_msg_here</error_msg>
+  <request_type>priceFetch/contractFetch/buy/sell</request_type>
+  <string>GET/accounts1586059192</string>
+  <signature>004cae60b45dd87f068142114c44262cc672718b128a555db01e0b34a99aa45e</signature>
+  <server_response_simplified>price/contracts/order details/etc</server_response_simplified>
+  <server_response>long response</server_response>
+</entry_timestamp2>
+</root>

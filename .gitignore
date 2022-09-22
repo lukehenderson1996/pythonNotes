@@ -6,6 +6,8 @@ __pycache__
 *.xls
 *.xlsx
 *.csv
+*.xml
+!scripts/logger help/*
 
 
 #git created sometimes
