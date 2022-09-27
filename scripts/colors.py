@@ -1,4 +1,7 @@
-#make text look unique
+'''Module for easy Windows cmd colored text'''
+
+# Author: Luke Henderson
+# Version 0.5
 
 import os
 os.system('') #enable VT100 Escape Sequence for WINDOWS 10 Ver. 1607

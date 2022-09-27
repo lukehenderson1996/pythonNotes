@@ -1,36 +1,72 @@
+"""Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
+
+# Author: Luke Henderson
+
 import os
 import time
 from datetime import datetime
+import contextlib
+import tkinter as tk
+from threading import Thread
+import queue
+
 import colors as cl
 import debugTools as dt
 
-import tkinter as tk
-import contextlib
-
+GUI_MODULE_DEFAULT_UPDATE_DELAY = 100/1000
 
 class GUI:
-    """Outer layer to drive App class"""
+    """Outer layer to drive App class in a separate thread"""
 
-    def __init__(self, windowTitle, updateDelay):
-        """Initialize the gui"""
+    def __init__(self, guiQ, windowTitle='Python GUI', updateDelay=None, quiet=False):
+        """Initialize the gui\n
+        Args:
+            guiQ [queue.queue object]: queue of tasks to be consumed/executed
+                Note: This is the only way to interact with a presently\n
+                running gui.
+            windowTitle [str, optional]: the object to be analyzed\n
+            updateDelay [float, optional]: timing to update with in seconds
+            quiet [bool, optional]: controls whether gui/app classes will print to CMD
+        Notes:
+            Can set these variables after init:
+                windowGeom: size/location of gui window. format:
+                    format: XxY+(-)Xoff+(-)Yoff
+                    example: '766x792+-7+0'"""
+        self.guiQ = guiQ
+        self.windowTitle = windowTitle
+        self.updateDelay = updateDelay
+        self.quiet = quiet
+        #extra customization to be set after init
+        self.windowGeom = '766x792+-7+0'
+
+    def start(self):
+        mainThd = Thread(target=self.mainLoop, daemon=True)
+        mainThd.start()
+
+    def mainLoop(self):
+        #init app
         self.root = tk.Tk()
-        self.app=App(self.root)
-        self.app.updateDelay = updateDelay
-        self.root.wm_title(windowTitle)
-        self.root.geometry('766x792+-7+0') #XxY+(-)Xoff+(-)Yoff
+        self.app=App(self.updateDelay, self.quiet, self.root)
+        #set init args
+        self.app.guiQ = self.guiQ
+        # self.app.updateDelay = self.updateDelay
+        self.root.wm_title(self.windowTitle)
+        self.root.geometry(self.windowGeom) 
 
-    def runMain(self):
-        #start loop
-        cl.blue('Successful start ' + cl.CMDCYAN + 'GUI')
+        #start mainloop
         self.root.mainloop()
 
 class App(tk.Frame):
-    def __init__(self, master=None):
+    def __init__(self, updateDelay, quiet, master=None):
         # self.root
         tk.Frame.__init__(self, master)
         # tk.Frame.wm_title('windowTitle')
         # tk.Frame.geometry('766x792+-7+0') #"900x500+0+0") #XxY+(-)Xoff+(-)Yoff
+        self.updateDelay = updateDelay
+        self.quiet = quiet
         self.master = master
+
+        #init default labels
         self.label2 = tk.Label(text="", fg="Black", font=("Consolas", 11), justify='left')
         self.label2.place(x=0,y=0)
         self.label = tk.Label(text="", fg="Red", font=("Helvetica", 18))
@@ -40,52 +76,69 @@ class App(tk.Frame):
         self.exitButton = tk.Button(text="Quit", command=self.clickExitButton)
         self.exitButton.place(x=550, y=0)
 
-        self.updateDelay = 0 #default 0 second update delay
+        #init internal variables
+        if self.updateDelay is None: 
+            self.updateDelay = GUI_MODULE_DEFAULT_UPDATE_DELAY
         self.rollPList = []
         self.x = 1
         self.kill = False
         self.killClearance = False
-        #shell variables init
-        self.shellKillReq = False
-        self.shellFeed = []
+
+        #start main outer loop
+        if not self.quiet:
+            cl.blue('Successful start ' + cl.CMDCYAN + 'GUI thread')
+        
+        # while True:
+        #     self.aPrint('If queue exists:')
+        #     if hasattr(self, 'guiQ'):
+        #         self.aPrint('\t' + "It's here!")
+        #         with contextlib.suppress(queue.Empty):
+        #             self.aPrint(self.guiQ.get(block=False))
+        #     time.sleep(.01)
 
         self.outerLoop()
 
+    '''---------------------------------------GUI main "outer" loop---------------------------------------'''
     def outerLoop(self):
+        #bug is that there must be something else called "main loop" that gets started later, outer loop is already running before gui even goes up
         if self.kill == True:
             self.killGUI()
         self.update_clock()
+
         # #example print loop
+        
         # self.aPrint(str(self.x) + ' Hello, world')
         # self.x += 1
         # self.aPrint(str(self.x))
         # self.x += 1
-        self.after(self.updateDelay, self.outerLoop)
 
+        #loop back
+        self.after(int(self.updateDelay*1000), self.outerLoop)
+
+    '''-----------------------utilities-----------------------'''
     def killGUI(self):
-        cl.yellow('Attempting to kill all threads')
-        while not self.killClearance:
-            pass
+        # cl.yellow('gui.py attempting to kill thread(s)')
+        # while not self.killClearance:
+        #     pass
+        
+        # self.master.destroy() # THROWS CRAZY BUGS
+        if not self.quiet:
+            cl.blue('Exiting ' + cl.CMDCYAN + 'GUI thread')
         exit()
 
     def clickExitButton(self):
         self.kill = True
 
+    '''-------------------assorted functions------------------'''
     def update_clock(self):
-        # now = time.strftime('%H:%M:%S')
-        # print(root.geometry())
         now = datetime.now().strftime("%H:%M:%S.%f")[:-3]
         self.label.configure(text=now)
-        
-    def printBoth(self, pText):
-        '''Prints to cmd and app'''
-        print(pText)
-        self.aPrint(pText)
 
     def aPrint(self, pText):
-        '''app Print
-        pText = text to print'''
+        '''rolling printer "app Print" similar to cmd/shell print()
+        pText = text to print, can include newlines'''
         BUFFER_SIZE = 42
+        # BUFFER_SIZE_GUESS = 792/11*1.33*1.25 #not sure how this can be done
         if not isinstance(pText, str):
             cl.red('Error: List contains something other than a string')
             exit()
@@ -105,101 +158,8 @@ class App(tk.Frame):
             pStr += el + '\n'
         self.label2.configure(text=pStr)
 
+    def printBoth(self, pText):
+            '''Prints to cmd/shell and app rolling printer'''
+            print(pText)
+            self.aPrint(pText)
 
-
-
-        
-
-# class Window(tk.Frame):
-#     def __init__(self, master=None):
-#         tk.Frame.__init__(self, master)
-#         self.master = master
-#         self.pack(fill=tk.BOTH, expand=1)
-
-#         menu = tk.Menu(self.master)
-#         self.master.config(menu=menu)
-
-#         fileMenu = tk.Menu(menu)
-#         fileMenu.add_command(label="Item")
-#         fileMenu.add_command(label="Exit", command=self.exitProgram)
-#         menu.add_cascade(label="File", menu=fileMenu)
-
-#         editMenu = tk.Menu(menu)
-#         editMenu.add_command(label="Undo")
-#         editMenu.add_command(label="Redo")
-#         menu.add_cascade(label="Edit", menu=editMenu)
-
-#         text = tk.Label(self, text="HELLO WORLD")
-#         text.place(x=70,y=90)
-#         text.pack()
-
-#     def exitProgram(self):
-#         exit()
-        
-# root = tk.Tk()
-# app = Window(root)
-# root.wm_title("Tkinter window")
-# root.geometry("32000x400000")
-# root.mainloop()
-
-
-
-
-# class Window(tk.Frame):
-
-#     def __init__(self, master=None):
-#         tk.Frame.__init__(self, master)        
-#         self.master = master
-
-#         # widget can take all window
-#         self.pack(fill=tk.BOTH, expand=1)
-
-#         # create button, link it to clickExitButton()
-#         exitButton = tk.Button(self, text="Exit", command=self.clickExitButton)
-
-#         # place button at (0,0)
-#         exitButton.place(x=0, y=0)
-
-#     def clickExitButton(self):
-#         exit()
-        
-# root = tk.Tk()
-# app = Window(root)
-# root.wm_title("Tkinter button")
-# root.geometry("320x200")
-# root.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-#from Najeed :)
-# myBackground = "#181818"
-# primText = "#FFFFFF"
-
-# def click():
-#     print("you clicked")
-
-# window = tk.Tk()
-# window.geometry("420x420")
-# window.title("Outputs")
-# window.config(background=myBackground)
-
-# button = tk.Button(window, text="click me", command=click)
-# button.pack()
-
-
-# dispText = tk.Canvas(window, textvariable = 'abcdefg')
-# dispText.pack()
-
-# window.mainloop() #place window
-
-# os.system('pause')

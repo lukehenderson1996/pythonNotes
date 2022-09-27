@@ -9,6 +9,8 @@ __pycache__
 *.xml
 !scripts/logger help/*
 
+#reference
+reference/*
 
 #git created sometimes
 *.orig

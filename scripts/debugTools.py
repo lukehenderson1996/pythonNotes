@@ -1,6 +1,8 @@
-'''Tools to make debugging faster & easier'''
-#Author: Luke Henderson 
-#Version 2.5
+'''Module to make debugging faster & easier'''
+
+# Author: Luke Henderson 
+# Version 2.5
+
 import colors as cl
 import ctypes
 import numpy

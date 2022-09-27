@@ -1,19 +1,23 @@
-#test code
+"""Test code for gui.py"""
+
+# Author: Luke Henderson 
 
 import os
 import time
 from datetime import datetime
+import queue
 
 import colors as cl
 import debugTools as dt
-import logger as lg
+import gui
 
 cl.green('Program Start')
 progStart = time.time()
 
-import tkinter as tk
-import gui
+guiQ = queue.Queue()
+dw = gui.GUI(guiQ, updateDelay=3, quiet=True)
+dw.start()
 
-#init (dw = ??? widget?)
-dw = gui.GUI("Miner Supervisor", 150)
-dw.runMain()
+time.sleep(1)
+guiQ.put('Message from beyond')
+os.system('pause')

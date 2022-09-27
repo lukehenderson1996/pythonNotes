@@ -13,12 +13,12 @@ CONSTANT_NAME = "constant's content"
 def internal_functions_here(arg1, arg2, optionalArg3='normal') -> int:
     """Short description\n
     Args:
-        arg1 [str]: the label name of the object to be analyzed\n
-        arg2 [float]: the object to be analyzed\n
-        optionalArg3 [str, optional]: 
-            'normal' (default, recursive if necessary) step thru obj\n
-                and print relevant info
-            'dir' print external and internal dir() results
+        arg1 [str]: short description\n
+        arg2 [float]: short description\n
+        optionalArg3 [str, optional]: description
+            typical input:
+                long description
+            typical input: short description
     Return:
         [int] 0 for pass
     Notes:
@@ -29,3 +29,11 @@ def internal_functions_here(arg1, arg2, optionalArg3='normal') -> int:
 
 
 #main code here
+multiLineImplicit  = print(
+    '1 ' + '2 ' + 
+    '3 ' + '4')
+
+multiLineExplicit = '1'   \
+    + '2' \
+    + '3' \
+    + '4'

@@ -1,6 +1,4 @@
-'''Place to test short code'''
-
-# Author: Luke Henderson
+#test code
 
 import os
 import time
@@ -13,3 +11,9 @@ import logger as lg
 cl.green('Program Start')
 progStart = time.time()
 
+import tkinter as tk
+import gui
+
+#init (dw = ??? widget?)
+dw = gui.GUI("Miner Supervisor", 150)
+dw.runMain()
