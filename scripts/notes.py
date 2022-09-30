@@ -24,11 +24,11 @@ for fruit, color in zip(fruits, colors):
 
 #getting element AND int index in same for loop
 for n, fruit in enumerate(fruits):
-    print(n, fruit)
-#or:
-for index, el in enumerate(dirList, start=0)
-            print(el)
-            print(index)
+    print(n, fruit, sep=' -- ')
+# #or:
+# for index, el in enumerate(dirList, start=0)
+#             print(el)
+#             print(index)
 
 
 

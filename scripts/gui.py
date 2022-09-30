@@ -25,7 +25,7 @@ class GUI:
                 Note: This is the only way to interact with a presently\n
                 running gui.
             windowTitle [str, optional]: the object to be analyzed\n
-            updateDelay [float, optional]: timing to update with in seconds
+            updateDelay [float, seconds, optional]: timing to update with
             quiet [bool, optional]: controls whether gui/app classes will print to CMD
         Notes:
             Can set these variables after init:
@@ -40,31 +40,37 @@ class GUI:
         self.windowGeom = '766x792+-7+0'
 
     def start(self):
+        '''Starts gui in separate thread, non blocking'''
         mainThd = Thread(target=self.mainLoop, daemon=True)
         mainThd.start()
 
     def mainLoop(self):
+        '''blocking init and mainloop, to be threaded'''
         #init app
         self.root = tk.Tk()
-        self.app=App(self.updateDelay, self.quiet, self.root)
+        self.app=App(self.guiQ, self.updateDelay, self.quiet, self.root)
         #set init args
-        self.app.guiQ = self.guiQ
+        # self.app.guiQ = self.guiQ
         # self.app.updateDelay = self.updateDelay
         self.root.wm_title(self.windowTitle)
         self.root.geometry(self.windowGeom) 
 
         #start mainloop
+        self.app.startGUI = True
         self.root.mainloop()
 
 class App(tk.Frame):
-    def __init__(self, updateDelay, quiet, master=None):
+    def __init__(self, quiQ, updateDelay, quiet, master=None):
         # self.root
         tk.Frame.__init__(self, master)
         # tk.Frame.wm_title('windowTitle')
         # tk.Frame.geometry('766x792+-7+0') #"900x500+0+0") #XxY+(-)Xoff+(-)Yoff
+        self.guiQ = quiQ
         self.updateDelay = updateDelay
         self.quiet = quiet
-        self.master = master
+        self.master = master 
+        
+        
 
         #init default labels
         self.label2 = tk.Label(text="", fg="Black", font=("Consolas", 11), justify='left')
@@ -77,6 +83,7 @@ class App(tk.Frame):
         self.exitButton.place(x=550, y=0)
 
         #init internal variables
+        self.startGUI = False
         if self.updateDelay is None: 
             self.updateDelay = GUI_MODULE_DEFAULT_UPDATE_DELAY
         self.rollPList = []
@@ -87,44 +94,49 @@ class App(tk.Frame):
         #start main outer loop
         if not self.quiet:
             cl.blue('Successful start ' + cl.CMDCYAN + 'GUI thread')
-        
-        # while True:
-        #     self.aPrint('If queue exists:')
-        #     if hasattr(self, 'guiQ'):
-        #         self.aPrint('\t' + "It's here!")
-        #         with contextlib.suppress(queue.Empty):
-        #             self.aPrint(self.guiQ.get(block=False))
-        #     time.sleep(.01)
-
         self.outerLoop()
 
     '''---------------------------------------GUI main "outer" loop---------------------------------------'''
     def outerLoop(self):
-        #bug is that there must be something else called "main loop" that gets started later, outer loop is already running before gui even goes up
+        while not self.startGUI:
+            self.after(int(self.updateDelay*1000), self.outerLoop)
+            return
         if self.kill == True:
             self.killGUI()
+            return
         self.update_clock()
 
+        #consume queue
+        # integer = self.q.get()
+        # self.aPrint('Hi')
+        # self.queue.task_done()
+        # while True:
+        self.aPrint('If queue exists:')
+        if hasattr(self, 'guiQ'):
+            self.aPrint('\t' + "It's here!")
+            with contextlib.suppress(queue.Empty):
+                task = self.guiQ.get(block=False)
+                self.aPrint(task)
+        time.sleep(.01)
+
+
         # #example print loop
-        
         # self.aPrint(str(self.x) + ' Hello, world')
         # self.x += 1
         # self.aPrint(str(self.x))
         # self.x += 1
 
-        #loop back
+        #loop back (Note the .after method is non-blocking)
         self.after(int(self.updateDelay*1000), self.outerLoop)
 
     '''-----------------------utilities-----------------------'''
     def killGUI(self):
-        # cl.yellow('gui.py attempting to kill thread(s)')
         # while not self.killClearance:
         #     pass
-        
-        # self.master.destroy() # THROWS CRAZY BUGS
         if not self.quiet:
             cl.blue('Exiting ' + cl.CMDCYAN + 'GUI thread')
-        exit()
+        self.quit()
+        # exit()
 
     def clickExitButton(self):
         self.kill = True

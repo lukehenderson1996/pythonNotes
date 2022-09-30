@@ -15,8 +15,8 @@ cl.green('Program Start')
 progStart = time.time()
 
 guiQ = queue.Queue()
-dw = gui.GUI(guiQ, updateDelay=3, quiet=True)
-dw.start()
+dw = gui.GUI(guiQ, updateDelay=2, quiet=False)
+myVar = dw.start()
 
 time.sleep(1)
 guiQ.put('Message from beyond')
