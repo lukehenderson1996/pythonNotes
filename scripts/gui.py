@@ -1,6 +1,7 @@
 """Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
 
 # Author: Luke Henderson
+# Version 2.0
 
 import os
 import time
@@ -22,8 +23,15 @@ class GUI:
         """Initialize the gui\n
         Args:
             guiQ [queue.queue object]: queue of tasks to be consumed/executed
-                Note: This is the only way to interact with a presently\n
-                running gui.
+                Note: This is the only way to interact with a presently
+                    running gui.
+                Usage:
+                    str, int, or float will be printed to aPrint\n
+                    list: forms a custom command object.
+                        Note: only supports length of 2 for the time being\n
+                        list[0] [str]: The function to be called, such as aPrint\n
+                        list[1] [any]: passed as argument to called function
+                        example: guiQ.put(['aPrint', 'Hello, world!'])
             windowTitle [str, optional]: the object to be analyzed\n
             updateDelay [float, seconds, optional]: timing to update with
             quiet [bool, optional]: controls whether gui/app classes will print to CMD
@@ -87,7 +95,6 @@ class App(tk.Frame):
         if self.updateDelay is None: 
             self.updateDelay = GUI_MODULE_DEFAULT_UPDATE_DELAY
         self.rollPList = []
-        self.x = 1
         self.kill = False
         self.killClearance = False
 
@@ -106,25 +113,40 @@ class App(tk.Frame):
             return
         self.update_clock()
 
-        #consume queue
-        # integer = self.q.get()
-        # self.aPrint('Hi')
-        # self.queue.task_done()
-        # while True:
-        self.aPrint('If queue exists:')
-        if hasattr(self, 'guiQ'):
-            self.aPrint('\t' + "It's here!")
-            with contextlib.suppress(queue.Empty):
-                task = self.guiQ.get(block=False)
+        #-------------------------------------------consume queue-------------------------------------------
+        task = None
+        #self.aPrint('\t' + 'Checking Queue:')
+        with contextlib.suppress(queue.Empty):
+            task = self.guiQ.get(block=False)
+            self.guiQ.task_done()
+        if task is None:
+            #task is none
+            pass #self.aPrint('\t' + 'Task was none')
+        else:
+            #task returned an object
+            if isinstance(task, list):
+                #list
+                if len(task) == 2:
+                    #list of correct length (valid command structure)
+                    if hasattr(self, task[0]):
+                        selfFnc = getattr(self, task[0])
+                        selfFnc(task[1])
+                    else:
+                        self.aPrint(f'Error: List object contains invalid command "{task[0]}"')
+                elif len(task) == 4:
+                    if task[0] == 'newLabel':
+                        self.newLabel(task[1], task[2], task[3])
+                else:
+                    self.aPrint(f'Error: List object is of invalid length {len(task)}')
+            elif isinstance(task, str):
+                #string
                 self.aPrint(task)
-        time.sleep(.01)
-
-
-        # #example print loop
-        # self.aPrint(str(self.x) + ' Hello, world')
-        # self.x += 1
-        # self.aPrint(str(self.x))
-        # self.x += 1
+            elif isinstance(task, int) or isinstance(task, float):
+                #int or float
+                self.aPrint(str(task))
+            else:
+                #object of another data type
+                self.aPrint('Error: Invalid datatype given')
 
         #loop back (Note the .after method is non-blocking)
         self.after(int(self.updateDelay*1000), self.outerLoop)
@@ -174,4 +196,9 @@ class App(tk.Frame):
             '''Prints to cmd/shell and app rolling printer'''
             print(pText)
             self.aPrint(pText)
+
+    def newLabel(self, labelText, color, size, font = "Helvetica"):
+        '''Creates a new custom label'''
+        self.label3 = tk.Label(text=labelText, fg=color, font=(font, size))
+        self.label3.place(x=380,y=30)
 

@@ -1,14 +1,14 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-# Version 2.5
+# Version 2.6
 
 import colors as cl
 import ctypes
 import numpy
 import pprint
 
-def info(label, obj, format='normal', treeLevel=0, dictKey='', color='normal') -> None:
+def info(label, obj, format='normal', treeLevel=0, dictKey='', color='normal'):
     """Prints info about an object\n
     Args:
         label [str]: the label name of the object to be analyzed\n
@@ -35,31 +35,36 @@ def info(label, obj, format='normal', treeLevel=0, dictKey='', color='normal') -
 
     #ctypes array
     if isinstance(obj, ctypes.Array):
-        prStr = '\tContents: [ '
+        prStr = '\t' + 'Contents: [ '
         for element in obj:
             prStr += hex(element) + ' '
         print(prStr + ']')
         return
 
     #normal python types:
+    #setup prefix/pretext
     if treeLevel==0:
         preText = prefix + f'{label} is '
     else:
         preText = prefix
+    #analyze
     if obj is None:
-        print(preText + 'None' + f'\t\t{type(obj)}')
+        #obj is None
+        print(preText + 'None' + '\t\t' + f'{type(obj)}')
     elif not ( isinstance(obj, dict) or isinstance(obj, list) or isinstance(obj, tuple) ):  #not hasattr(obj, '__iter__'):
-        #Obj not iterable
+        #obj not iterable, print contents and type
         print(preText + f'{obj}\t\t{type(obj)}')
     else:
-        #Obj is iterable
-        print(preText + 'iterable, of ' + f'type {type(obj)}, length {len(obj)}, contents:')
+        #obj is iterable, and of type dict, list, or tuple
+        print(preText + f'iterable, of type {type(obj)}, length {len(obj)}, contents:')
         if len(obj)==0:
-            print(prefix + '\tEmpty, length of zero')
+            #empty iterable
+            print(prefix + '\t' + 'Empty, length of zero')
         else:
+            #valid iterable, iterate and print info
             for el in obj:
                 if isinstance(obj, dict):
-                    info(type(obj[el]), obj[el], treeLevel=treeLevel+1, dictKey= el+': ')
+                    info(type(obj[el]), obj[el], treeLevel=treeLevel+1, dictKey= str(el)+': ')
                 else:
                     info(type(el), el, treeLevel=treeLevel+1)
     
@@ -67,7 +72,7 @@ def info(label, obj, format='normal', treeLevel=0, dictKey='', color='normal') -
     #ENDC to fix printing back to normal
     print(cl.ENDC, end='', flush=True)
 
-def dirInfo(label, obj, format='normal', treeLevel=0, color='normal') -> None:
+def dirInfo(label, obj, format='normal', treeLevel=0, color='normal'):
     """Prints and analyzes dir() info about an object\n
     Args:
         label [str]: the label name of the object to be analyzed\n
@@ -106,6 +111,6 @@ def dirInfo(label, obj, format='normal', treeLevel=0, color='normal') -> None:
     #ENDC to fix printing back to normal
     print(cl.ENDC, end='', flush=True)
 
-def pprintInfo(obj) -> None:
+def pprintInfo(obj):
     '''Wrapper for pprint'''
     pprint.pprint(obj)

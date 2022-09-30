@@ -56,3 +56,7 @@ dt.dirInfo('classInst', classInst)
 #pprint
 cl.blue('pprint:')
 dt.pprintInfo(myObj)
+
+#dictionary bug test, for version 2.6
+#should be able to support str/int/float/bool keys
+dt.info('trickyDict', {'name': 'Dionysia', 0: 'This one has an int key', 5.345: 'This one has a float key', True: 'This one has a bool key'})
