@@ -1,7 +1,7 @@
 """Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
 
 # Author: Luke Henderson
-# Version 2.0
+# Version 2.2
 
 import os
 import time
@@ -10,11 +10,64 @@ import contextlib
 import tkinter as tk
 from threading import Thread
 import queue
+'''for sendkeys: need error: Microsoft Visual C++ 14.0 is required. Get it with "Build Tools for 
+Visual Studio": https://visualstudio.microsoft.com/downloads/'''
+    # from SendKeys import SendKeys
+    # SendKeys('%{TAB}') # to alt tab back to he cmd window
 
 import colors as cl
 import debugTools as dt
 
-GUI_MODULE_DEFAULT_UPDATE_DELAY = 100/1000
+DEFAULT_UPDATE_DELAY = 100/1000 #(seconds)
+MAX_Q_SIZE = 10
+Q_MAXED_WARN_DELAY = 5 #(seconds)
+
+class LABEL:
+    """Helper class for creation of custom labels"""
+    'myLabel', "~Label's Text~", 'Blue', 18
+    idNum = 0
+
+    id : str
+    labelText : str
+    color : str
+    size : int
+    font : str
+    x : int
+    y : int
+
+    def __init__(self, color='Black', size=12, font="Helvetica"):
+        """generate unique LABEL object. Not thread safe\n
+        Args:
+            id [int]: unique ID for new custom label. Recommend making this
+                the same as the variable name in main code"""
+        #handle id, not thread safe due to simultaneous calls racing incrementation
+        #print(f'ID: {id(self)}') #could also use this for thread safe version
+        self.id= LABEL.idNum
+        LABEL.idNum += 1
+        #optional args
+        self.color = color
+        self.size = size
+        self.font = font
+        #internal instance vars to be set in a second step
+        self.labelText = ''
+        self.x = 380
+        self.y = 30
+
+    def set(self, labelText, x=None, y=None):
+        '''\n
+        Args:
+            labelText [str]: text to display
+            x: default 380
+            y: default 30'''
+        if not labelText is None:
+            self.labelText = labelText
+        if not x is None:
+            self.x = x
+        if not y is None:
+            self.y = y
+        return self
+
+
 
 class GUI:
     """Outer layer to drive App class in a separate thread"""
@@ -37,7 +90,7 @@ class GUI:
             quiet [bool, optional]: controls whether gui/app classes will print to CMD
         Notes:
             Can set these variables after init:
-                windowGeom: size/location of gui window. format:
+                windowGeom [str, currently not in use]: size/location of gui window. format:
                     format: XxY+(-)Xoff+(-)Yoff
                     example: '766x792+-7+0'"""
         self.guiQ = guiQ
@@ -45,23 +98,22 @@ class GUI:
         self.updateDelay = updateDelay
         self.quiet = quiet
         #extra customization to be set after init
-        self.windowGeom = '766x792+-7+0'
+        self.windowGeom = '768x792+-8+0' #'766x792+-7+0' #currently not in use
 
     def start(self):
-        '''Starts gui in separate thread, non blocking'''
+        """Starts gui in separate thread, non blocking"""
         mainThd = Thread(target=self.mainLoop, daemon=True)
         mainThd.start()
 
     def mainLoop(self):
-        '''blocking init and mainloop, to be threaded'''
+        """blocking init and mainloop, to be threaded"""
         #init app
         self.root = tk.Tk()
         self.app=App(self.guiQ, self.updateDelay, self.quiet, self.root)
         #set init args
-        # self.app.guiQ = self.guiQ
-        # self.app.updateDelay = self.updateDelay
         self.root.wm_title(self.windowTitle)
-        self.root.geometry(self.windowGeom) 
+        self.root.geometry(self.windowGeom) #to prevent eye sore of extra window movement
+        self.root.state('zoomed')
 
         #start mainloop
         self.app.startGUI = True
@@ -73,15 +125,17 @@ class App(tk.Frame):
         tk.Frame.__init__(self, master)
         # tk.Frame.wm_title('windowTitle')
         # tk.Frame.geometry('766x792+-7+0') #"900x500+0+0") #XxY+(-)Xoff+(-)Yoff
+        #queue management vars
         self.guiQ = quiQ
+        self.lastQWarning = 0 #beginning of time.time()
+        #misc vars
         self.updateDelay = updateDelay
         self.quiet = quiet
         self.master = master 
         
-        
-
         #init default labels
-        self.label2 = tk.Label(text="", fg="Black", font=("Consolas", 11), justify='left')
+        self.rollPrHt = 11 #11
+        self.label2 = tk.Label(text="", fg="Black", font=("Consolas", self.rollPrHt), justify='left')
         self.label2.place(x=0,y=0)
         self.label = tk.Label(text="", fg="Red", font=("Helvetica", 18))
         self.label.place(x=380,y=5)
@@ -93,65 +147,101 @@ class App(tk.Frame):
         #init internal variables
         self.startGUI = False
         if self.updateDelay is None: 
-            self.updateDelay = GUI_MODULE_DEFAULT_UPDATE_DELAY
+            self.updateDelay = DEFAULT_UPDATE_DELAY
         self.rollPList = []
         self.kill = False
         self.killClearance = False
+        self.userLabels = {}
+        self.firstRun = True
 
         #start main outer loop
         if not self.quiet:
             cl.blue('Successful start ' + cl.CMDCYAN + 'GUI thread')
         self.outerLoop()
 
-    '''---------------------------------------GUI main "outer" loop---------------------------------------'''
+    """---------------------------------------GUI main "outer" loop---------------------------------------"""
     def outerLoop(self):
         while not self.startGUI:
             self.after(int(self.updateDelay*1000), self.outerLoop)
             return
+        if self.firstRun:
+            self.firstRun = False
+            self.outerLoopInit()
         if self.kill == True:
             self.killGUI()
             return
+
+        #update ongoing activities
         self.update_clock()
 
         #-------------------------------------------consume queue-------------------------------------------
-        task = None
+        #convert multithreaded queue to single threaded, single loop task list
+        task = []
         #self.aPrint('\t' + 'Checking Queue:')
-        with contextlib.suppress(queue.Empty):
-            task = self.guiQ.get(block=False)
-            self.guiQ.task_done()
-        if task is None:
-            #task is none
-            pass #self.aPrint('\t' + 'Task was none')
-        else:
-            #task returned an object
-            if isinstance(task, list):
+        qsize = self.guiQ.qsize() #approximate q size (not reliable)
+        if qsize > 0:
+            #warn if too long
+            if qsize > MAX_Q_SIZE:
+                if time.time()-self.lastQWarning > Q_MAXED_WARN_DELAY:
+                    self.printBoth(f'GUI Error: Queue too long, of length {qsize}')
+                    self.lastQWarning = time.time()
+            #process queue
+            doneCollecting = False
+            while not doneCollecting:
+                try:
+                    task.append(self.guiQ.get(block=False))
+                    self.guiQ.task_done()
+                except queue.Empty:
+                    doneCollecting = True
+                if len(task) >= MAX_Q_SIZE:
+                    doneCollecting = True
+            # with contextlib.suppress(queue.Empty):
+            #     task = self.guiQ.get(block=False)
+            #     self.guiQ.task_done()
+
+        #process task
+        while len(task) > 0:
+            taskItem = task.pop(0)
+            if isinstance(taskItem, list):
                 #list
-                if len(task) == 2:
+                if len(taskItem) == 2:
                     #list of correct length (valid command structure)
-                    if hasattr(self, task[0]):
-                        selfFnc = getattr(self, task[0])
-                        selfFnc(task[1])
+                    if hasattr(self, taskItem[0]):
+                        selfFnc = getattr(self, taskItem[0])
+                        selfFnc(taskItem[1])
                     else:
-                        self.aPrint(f'Error: List object contains invalid command "{task[0]}"')
-                elif len(task) == 4:
-                    if task[0] == 'newLabel':
-                        self.newLabel(task[1], task[2], task[3])
+                        self.aPrint(f'GUI Error: List object contains invalid command "{taskItem[0]}"')
                 else:
-                    self.aPrint(f'Error: List object is of invalid length {len(task)}')
-            elif isinstance(task, str):
+                    self.aPrint(f'GUI Error: List object is of invalid length {len(taskItem)}')
+            elif isinstance(taskItem, str):
                 #string
-                self.aPrint(task)
-            elif isinstance(task, int) or isinstance(task, float):
+                self.aPrint(taskItem)
+            elif isinstance(taskItem, int) or isinstance(taskItem, float):
                 #int or float
-                self.aPrint(str(task))
+                self.aPrint(str(taskItem))
+            elif isinstance(taskItem, LABEL):
+                #custom LABEL object
+                self.setLabel(taskItem)
             else:
                 #object of another data type
-                self.aPrint('Error: Invalid datatype given')
+                self.aPrint('GUI Error: Invalid datatype given')
 
         #loop back (Note the .after method is non-blocking)
         self.after(int(self.updateDelay*1000), self.outerLoop)
 
-    '''-----------------------utilities-----------------------'''
+    """-----------------------utilities-----------------------"""
+    def outerLoopInit(self):
+        #dynamic window geometry adjustment for left half of screen
+        maxWd = int(self.master.winfo_width())
+        self.wWd = int(maxWd/2)
+        self.wHt = int(self.master.winfo_height()-9)
+        self.wX = int(self.master.winfo_rootx()-8)
+        self.wY = int(self.master.winfo_rooty()-23)
+        # print(f'Current geom: {self.master.winfo_geometry()}')
+        # print(f'Fixed:        {self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
+        self.master.state('normal')
+        self.master.wm_geometry(f'{self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
+
     def killGUI(self):
         # while not self.killClearance:
         #     pass
@@ -163,19 +253,18 @@ class App(tk.Frame):
     def clickExitButton(self):
         self.kill = True
 
-    '''-------------------assorted functions------------------'''
+    """-------------------assorted functions------------------"""
     def update_clock(self):
         now = datetime.now().strftime("%H:%M:%S.%f")[:-3]
         self.label.configure(text=now)
 
     def aPrint(self, pText):
-        '''rolling printer "app Print" similar to cmd/shell print()
-        pText = text to print, can include newlines'''
-        BUFFER_SIZE = 42
-        # BUFFER_SIZE_GUESS = 792/11*1.33*1.25 #not sure how this can be done
+        """rolling printer "app Print" similar to cmd/shell print()
+        pText = text to print, can include newlines"""
+        BUFFER_SIZE = int((self.wHt-44)/self.rollPrHt*1.30/2 - 1) #43
         if not isinstance(pText, str):
-            cl.red('Error: List contains something other than a string')
-            exit()
+            cl.red('GUI Error: aPrint() List contains something other than a string')
+            return
         #split on newlines
         splitPText = pText.split('\n')
         #wrap text
@@ -193,12 +282,21 @@ class App(tk.Frame):
         self.label2.configure(text=pStr)
 
     def printBoth(self, pText):
-            '''Prints to cmd/shell and app rolling printer'''
+            """Prints to cmd/shell and app rolling printer"""
             print(pText)
             self.aPrint(pText)
 
-    def newLabel(self, labelText, color, size, font = "Helvetica"):
-        '''Creates a new custom label'''
-        self.label3 = tk.Label(text=labelText, fg=color, font=(font, size))
-        self.label3.place(x=380,y=30)
+    def setLabel(self, lb):
+        """Creates/updates custom labels\n
+        Create: utilizes all input object parameters\n 
+        Update: updates text, position, color of label\n
+        Args:
+            lb [obj of class LABEL]: input parameter object. (short for label)\n
+        Vars from this class' __init__():
+            self.userLabels = {}"""
+        if lb.id in self.userLabels:
+            self.userLabels[lb.id].configure(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
+        else:
+            self.userLabels[lb.id] = tk.Label(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
+        self.userLabels[lb.id].place(x=lb.x,y=lb.y)
 

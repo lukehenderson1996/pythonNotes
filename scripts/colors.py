@@ -1,7 +1,7 @@
 '''Module for easy Windows cmd colored text'''
 
 # Author: Luke Henderson
-# Version 0.5
+# Version 0.6
 
 import os
 os.system('') #enable VT100 Escape Sequence for WINDOWS 10 Ver. 1607
@@ -34,7 +34,7 @@ def green(printStr):
     print(OKGREEN + printStr + ENDC)
 
 def yellow(printStr):
-    """prints in green, expects a string input"""
+    """prints in yellow, expects a string input"""
     print(WARNING + printStr + ENDC)
 
 def purple(printStr):
