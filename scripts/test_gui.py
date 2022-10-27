@@ -29,12 +29,12 @@ dw.start()
 # utils.pause()
 
 
-#rolling printer test
-guiQ.put('1-----------------------------------------------')
-for i in range(2, 100+1):
-    guiQ.put(i)
-    # time.sleep(.1)
-utils.pause()
+# #rolling printer test
+# guiQ.put('1-----------------------------------------------')
+# for i in range(2, 100+1):
+#     guiQ.put(i)
+#     # time.sleep(.1)
+# utils.pause()
 
 
 # #maxed out queue test
@@ -67,3 +67,31 @@ utils.pause()
 # guiQ.put(labelTwo.set('Consolas and 11'))
 # utils.pause()
 
+
+#test output templates:
+# l1 = Label(root, text="This", borderwidth=2, relief="groove")
+myLabel = gui.LABEL(labType='textInd', size=12)
+myLabel.set(0, x=300, y=300, indLabel="Indicator's Name")
+guiQ.put(myLabel)
+for i in range(1, 3):
+    time.sleep(1)
+    guiQ.put(myLabel.set(i))
+utils.pause()
+
+
+# #grid output
+# for yPos in range(50, 1000, 200):
+#     xGrid = []
+#     for xLoc in range(0, 1000, 100):
+#         xGrid.append(gui.LABEL(size=12))
+#         xGrid[-1].set(xLoc, x=xLoc, y=yPos)
+#         guiQ.put(xGrid[-1])
+#     time.sleep(0.1)
+# for xPos in range(50, 1000, 200):
+#     yGrid = []
+#     for yLoc in range(0, 1000, 100):
+#         yGrid.append(gui.LABEL(size=12))
+#         yGrid[-1].set(yLoc, x=xPos, y=yLoc)
+#         guiQ.put(yGrid[-1])
+#     time.sleep(0.1)
+# utils.pause()

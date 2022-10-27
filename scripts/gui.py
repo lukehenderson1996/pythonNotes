@@ -1,7 +1,7 @@
 """Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
 
 # Author: Luke Henderson
-# Version 2.2
+# Version 2.3
 
 import os
 import time
@@ -19,7 +19,7 @@ import colors as cl
 import debugTools as dt
 
 DEFAULT_UPDATE_DELAY = 100/1000 #(seconds)
-MAX_Q_SIZE = 10
+MAX_Q_SIZE = 15
 Q_MAXED_WARN_DELAY = 5 #(seconds)
 
 class LABEL:
@@ -27,19 +27,25 @@ class LABEL:
     'myLabel', "~Label's Text~", 'Blue', 18
     idNum = 0
 
-    id : str
-    labelText : str
+    # id : str
+    # labelText : str #str or list of str
     color : str
     size : int
     font : str
     x : int
     y : int
 
-    def __init__(self, color='Black', size=12, font="Helvetica"):
+    def __init__(self, color='Black', size=12, font="Helvetica", labType='text'):
         """generate unique LABEL object. Not thread safe\n
         Args:
             id [int]: unique ID for new custom label. Recommend making this
-                the same as the variable name in main code"""
+                the same as the variable name in main code
+        Notes:
+            labType (label type):
+                text
+                textInd
+                    use this to create a number or string indicator with label on top.\n
+                    cannot change location after creation"""
         #handle id, not thread safe due to simultaneous calls racing incrementation
         #print(f'ID: {id(self)}') #could also use this for thread safe version
         self.id= LABEL.idNum
@@ -48,26 +54,42 @@ class LABEL:
         self.color = color
         self.size = size
         self.font = font
+        self.labType = labType
         #internal instance vars to be set in a second step
         self.labelText = ''
         self.x = 380
         self.y = 30
-
-    def set(self, labelText, x=None, y=None):
+        #special labType
+        if self.labType == 'textInd':
+            self.indLabel = None
+            
+    def set(self, labelText, x=None, y=None, **kwargs):
         '''\n
         Args:
-            labelText [str]: text to display
-            x: default 380
-            y: default 30'''
+            labelText [str, int, float]: text to display\n
+            x [int, optional]: default 380\n
+            y [int, optional]: default 30
+        Optional kwargs:
+            indLabel [str, int, float]: label of text indicator'''
+        #regular text label
         if not labelText is None:
-            self.labelText = labelText
+            self.labelText = str(labelText)
         if not x is None:
             self.x = x
         if not y is None:
             self.y = y
+        if self.labType == 'textInd':
+                #text indicator, could be numeric or str
+                #error handling
+                if not (('indLabel' in kwargs) or (not self.indLabel is None)):
+                    cl.red(f'GUI LABEL Error: set expected parameter "indLabel"')
+                    return
+                #set vars
+                if self.indLabel is None:
+                    #setting for the first time, need indLabel
+                    self.indLabel = str(kwargs['indLabel'])
+                    self.y= int(self.y - self.size*2)
         return self
-
-
 
 class GUI:
     """Outer layer to drive App class in a separate thread"""
@@ -286,6 +308,11 @@ class App(tk.Frame):
             print(pText)
             self.aPrint(pText)
 
+    def printError(self, pText):
+            """Prints red to cmd/shell and black to app rolling printer"""
+            cl.red(pText)
+            self.aPrint(pText)
+
     def setLabel(self, lb):
         """Creates/updates custom labels\n
         Create: utilizes all input object parameters\n 
@@ -300,3 +327,12 @@ class App(tk.Frame):
             self.userLabels[lb.id] = tk.Label(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
         self.userLabels[lb.id].place(x=lb.x,y=lb.y)
 
+        if lb.labType == 'textInd':
+            id2 = lb.id + 0.1
+            if id2 in self.userLabels:
+                pass #self.userLabels[id2].configure(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
+            else:
+                self.userLabels[lb.id].configure(borderwidth=2, relief="sunken")
+                self.userLabels[id2] = tk.Label(text=lb.indLabel, fg=lb.color, font=(lb.font, lb.size))
+                self.userLabels[id2].place(x=lb.x, y=int(lb.y-lb.size*2) )
+        
