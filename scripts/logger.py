@@ -1,7 +1,7 @@
 """Logger class with multiple output options and data handling tools"""
 
 # Author: Luke Henderson
-# Version 0.1
+# Version 1.0
 
 import os
 import time
@@ -70,15 +70,19 @@ class LOGGER:
         close() will close all files and finalize xml formatting
         """
 
-    def __init__(self, logCols=None, filename=None, prefix='', quiet=True, csv=False, xml=False):
+    def __init__(self, logCols=None, filename=None, prefix='', quiet=True, \
+        csv=False, xml=False, absPath=None):
         """Logger with various output options\n
         Args:
             logCols [list of str]: populates the headers if not None\n
-            filename [str]: custom name of file to override default\n
-            prefix [str]: prefix to file names, default ''\n
-            quiet [bool]: False for log location information\n
-            csv [bool, default]: whether to create csv log under this instance\n
-            xml [bool]: whether to create xml log under this instance\n
+            filename [str, optional]: custom name of file to override default\n
+            prefix [str, optional]: prefix to file names, default ''\n
+            quiet [bool, optional]: False for log location information\n
+            csv [bool, default/optional]: whether to create csv log under this instance\n
+            xml [bool, optional]: whether to create xml log under this instance\n
+            absPath [str, optional]: include file extension
+                filename parameter will be ignored\n
+                changes mode of logger to csv only, not tested for xml
         Notes:
             Number of logCols must exacly equal length of list when\n
             calling simpLog()"""
@@ -101,17 +105,25 @@ class LOGGER:
         #     prefix = str(time.time()).split('.')[0] + ' ' + prefix + ' '
         # fileSuffix = ''
 
-        filePath = os.path.dirname(os.getcwd())
-        filePathList = []
-        filenameList = [filename, filename]
-        if csv:
-            if filenameList[0] is None:
-                filenameList[0] = DEFAULT_FILENAME_CSV
-            filePathList.append(filePath + f'\\datalogs\\{prefix + filenameList[0] + fileSuffix}.csv')
-        if xml:
-            if filenameList[1] is None:
-                filenameList[1] = DEFAULT_FILENAME_XML
-            filePathList.append(filePath + f'\\datalogs\\{prefix + filenameList[2] + fileSuffix}.xml')
+        #generate file path list
+        if absPath is None:
+            #relative path
+            filePath = os.path.dirname(os.getcwd())
+            filePathList = []
+            filenameList = [filename, filename] #can change to accept list or str for filenames later
+            if csv:
+                if filenameList[0] is None:
+                    filenameList[0] = DEFAULT_FILENAME_CSV
+                filePathList.append(filePath + f'\\datalogs\\{prefix + filenameList[0] + fileSuffix}.csv')
+            if xml:
+                if filenameList[1] is None:
+                    filenameList[1] = DEFAULT_FILENAME_XML
+                filePathList.append(filePath + f'\\datalogs\\{prefix + filenameList[2] + fileSuffix}.xml')
+        else:
+            #absolute path
+            filePathList = []
+            filePathList.append(absPath)
+        #generate file list, guaranteeing no modification of old files
         self.fileList = []
         for el in filePathList:
             fileExt = el.split('.')[-1]
@@ -145,12 +157,13 @@ class LOGGER:
         if not self.filesClosed:
             self.close()
 
-    def simpLog(self, data):
+    def simpLog(self, dataInput):
         '''Simple logging to disk with only one type of formatting\n
         Args:
             data [list of str/int/float]: Any data input to be logged under
                 previously defined columns (self.logCols)'''
-        #data conditioning/validating
+        #data copy/conditioning/validating
+        data = dataInput.copy()
         for i in range(len(data)):
             if isinstance(data[i], str):
                 pass
@@ -162,9 +175,16 @@ class LOGGER:
         #write to logs
         for el in self.fileList:
             if el.ext == 'csv':
+                #error checking
+                if len(data) != len(self.logCols):
+                    cl.red('Error: logger data length mismatch with logCols length')
+                    dt.info('self.logCols', self.logCols)
+                    dt.info('data', data)
+                    raise Exception
+                #write content
                 el.write(data[0])
                 for elem in data[1:]:
-                    el.write(' , ' + elem)
+                    el.write(',' + elem) #' , '
                 el.write('\n')
                 el.flush()
             if el.ext == 'xml':
@@ -206,7 +226,8 @@ class LOGGER:
 
     def xmlCheckTag(self, tagName) -> bool:
         '''Description\n
-        Args:\n
+        Args:
+            tagName [str]: tag name
         Return:
             [bool] True for pass, False for fail
         '''

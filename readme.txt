@@ -1,5 +1,21 @@
 Python Notes written by Luke Henderson
 
+BUGS:
+general
+    use type checking/click lower right hand corer {} to turn it on in a .py file
+        see if -> int makes a difference now
+logger
+    cannot accept None as input data for csv file, maybe other datatypes
+
+to do:
+gui:
+    '''for sendkeys: need error: Microsoft Visual C++ 14.0 is required. Get it with "Build Tools for 
+    Visual Studio": https://visualstudio.microsoft.com/downloads/'''
+    # from SendKeys import SendKeys
+    # SendKeys('%{TAB}') # to alt tab back to he cmd window
+
+Periodic code audit:
+    verify each function never assigns to an inputted object without object.copy(), unless that's the intent.
 
 Table of contents:
 pythonNotes git repo
@@ -22,3 +38,9 @@ pythonNotes git repo
         test modules for advanced examples
             test_[module name]
         
+
+
+Adding python path:
+add SYSTEM environmental variable call PYTHONPATH, equal to C:\ASC\SENSING\CSPS\hwdriver\scripts
+Press OK and restart your computer for the changes to take effect
+will work for both VS code and python from cmd

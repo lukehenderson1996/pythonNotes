@@ -1,6 +1,7 @@
 """Short description"""
 
 # Author: xxxxx
+# Version 0.0
 
 'external imports here'
 
@@ -25,12 +26,12 @@ class NAME: #or, ClassName
         self.internalVariable = 'variable content'
         pass
 
-    def init(self) -> None:
+    def init(self):
         """non-automatic init"""
         pass
 
-    def _internalFunction(self, arg1) -> None:
+    def _internalFunction(self, arg1):
         pass
 
-    def publicFunction(self, arg1, arg2) -> None:
+    def publicFunction(self, arg1, arg2):
         pass

@@ -10,7 +10,7 @@ import queue
 import colors as cl
 import debugTools as dt
 import gui
-import utils
+import utils as ut
 
 cl.green('Program Start')
 progStart = time.time()
@@ -26,7 +26,7 @@ dw.start()
 # guiQ.put(['aPrint', 'Custom command aPrint success'])
 # guiQ.put(['printBoth', 'should be printed in both places...'])
 # time.sleep(1)
-# utils.pause()
+# ut.pause()
 
 
 # #rolling printer test
@@ -34,7 +34,7 @@ dw.start()
 # for i in range(2, 100+1):
 #     guiQ.put(i)
 #     # time.sleep(.1)
-# utils.pause()
+# ut.pause()
 
 
 # #maxed out queue test
@@ -43,7 +43,7 @@ dw.start()
 # for i in range(2, 100+1):
 #     guiQ.put(i)
 #     # time.sleep(.1)
-# utils.pause()
+# ut.pause()
 
 
 # #custom label tests
@@ -65,7 +65,7 @@ dw.start()
 # labelTwo.font = 'consolas'
 # labelTwo.size = 11
 # guiQ.put(labelTwo.set('Consolas and 11'))
-# utils.pause()
+# ut.pause()
 
 
 #test output templates:
@@ -76,7 +76,7 @@ guiQ.put(myLabel)
 for i in range(1, 3):
     time.sleep(1)
     guiQ.put(myLabel.set(i))
-utils.pause()
+ut.pause()
 
 
 # #grid output
@@ -94,4 +94,4 @@ utils.pause()
 #         yGrid[-1].set(yLoc, x=xPos, y=yLoc)
 #         guiQ.put(yGrid[-1])
 #     time.sleep(0.1)
-# utils.pause()
+# ut.pause()

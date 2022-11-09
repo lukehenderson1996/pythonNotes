@@ -1,6 +1,7 @@
 """Short description"""
 
 # Author: xxxxx 
+# Version 0.0
 
 'external imports here'
 
@@ -10,7 +11,7 @@
 
 CONSTANT_NAME = "constant's content"
 
-def internal_functions_here(arg1, arg2, optionalArg3='normal') -> int:
+def internal_functions_here(arg1, arg2, optionalArg3='normal'):
     """Short description\n
     Args:
         arg1 [str]: short description\n

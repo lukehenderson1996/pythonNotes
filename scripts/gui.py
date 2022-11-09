@@ -1,7 +1,7 @@
 """Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
 
 # Author: Luke Henderson
-# Version 2.3
+# Version 2.4
 
 import os
 import time
@@ -10,10 +10,6 @@ import contextlib
 import tkinter as tk
 from threading import Thread
 import queue
-'''for sendkeys: need error: Microsoft Visual C++ 14.0 is required. Get it with "Build Tools for 
-Visual Studio": https://visualstudio.microsoft.com/downloads/'''
-    # from SendKeys import SendKeys
-    # SendKeys('%{TAB}') # to alt tab back to he cmd window
 
 import colors as cl
 import debugTools as dt
@@ -24,7 +20,6 @@ Q_MAXED_WARN_DELAY = 5 #(seconds)
 
 class LABEL:
     """Helper class for creation of custom labels"""
-    'myLabel', "~Label's Text~", 'Blue', 18
     idNum = 0
 
     # id : str
@@ -45,7 +40,10 @@ class LABEL:
                 text
                 textInd
                     use this to create a number or string indicator with label on top.\n
-                    cannot change location after creation"""
+                    cannot change location after creation
+        Usage (outdated):
+            'myLabel', "~Label's Text~", 'Blue', 18
+        """
         #handle id, not thread safe due to simultaneous calls racing incrementation
         #print(f'ID: {id(self)}') #could also use this for thread safe version
         self.id= LABEL.idNum

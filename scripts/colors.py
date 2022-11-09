@@ -1,7 +1,7 @@
 '''Module for easy Windows cmd colored text'''
 
 # Author: Luke Henderson
-# Version 0.6
+# Version 0.7
 
 import os
 os.system('') #enable VT100 Escape Sequence for WINDOWS 10 Ver. 1607
@@ -17,36 +17,33 @@ UNDERLINE = '\033[4m'
 CMDBLUE = '\033[36m'
 CMDCYAN = '\033[96m'
 
-# class colorPrinter:
-#     """Custom print colors"""
-
-#normal print colors
+'''Prints in color of function name\n
+Args:
+    printStr [str, other]: input text to print in color
+        converted via str()'''
 def blue(printStr):
-    """prints in blue, expects a string input"""
-    print(OKBLUE + printStr + ENDC)
+    print(OKBLUE + str(printStr) + ENDC)
 
 def red(printStr):
-    """prints in red, expects a string input"""
-    print(FAIL + printStr + ENDC)
+    print(FAIL + str(printStr) + ENDC)
 
 def green(printStr):
-    """prints in green, expects a string input"""
-    print(OKGREEN + printStr + ENDC)
+    print(OKGREEN + str(printStr) + ENDC)
 
 def yellow(printStr):
-    """prints in yellow, expects a string input"""
-    print(WARNING + printStr + ENDC)
+    print(WARNING + str(printStr) + ENDC)
 
 def purple(printStr):
-    """prints in purple, expects a string input"""
-    print(HEADER + printStr + ENDC)
+    print(HEADER + str(printStr) + ENDC)
 
-#cmd colors (echo command):
+'''Cmd print colors (echo command)
+    can accept %DATE/TIME% placeholders:
+Args:
+    printStr [str, other]: input text to print in color\n
+        converted via str()'''
 def cmdBlue(printStr):
-    """prints in blue, expects a string input, can accept %DATE/TIME% placeholders"""
-    os.system('echo ' + CMDBLUE + printStr + ENDC)
+    os.system('echo ' + CMDBLUE + str(printStr) + ENDC)
     
 def cmdCyan(printStr):
-    """prints in cyan, expects a string input, can accept %DATE/TIME% placeholders"""
-    os.system('echo ' + CMDCYAN + printStr + ENDC)
+    os.system('echo ' + CMDCYAN + str(printStr) + ENDC)
 

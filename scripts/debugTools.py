@@ -1,20 +1,19 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-# Version 2.6
+# Version 2.7
 
-import colors as cl
 import ctypes
 import numpy
 import pprint
 
-def info(label, obj, format='normal', treeLevel=0, dictKey='', color='normal'):
+import colors as cl
+
+def info(label, obj, treeLevel=0, dictKey='', color='normal'):
     """Prints info about an object\n
     Args:
         label [str]: the label name of the object to be analyzed\n
         obj [any]: the object to be analyzed\n
-        format [str, optional]: 
-            currently not in use
         treeLevel [int, internal]: can use for tabbing, used internally
             for recursive tabbing
         dictKey [str, internal]: used internally for printing out dictionary
@@ -22,12 +21,11 @@ def info(label, obj, format='normal', treeLevel=0, dictKey='', color='normal'):
         color [str, optional]:
             uses colors.py constants to change printer color\n
             example: use 'OKBLUE' for colors.OKBLUE
-
     Notes:
         usage example: dt.info('myObj', myObj)
             assumed using "import debugTools as dt"
         advanced usage example:
-            dt.info('myObj', myObj, format='dir', color='OKBLUE')
+            dt.info('myObj', myObj, color='OKBLUE')
         internal arguments are optional and normally just used for recursion"""
     prefix = '\t'*treeLevel + dictKey
     if not color=='normal':
@@ -39,6 +37,20 @@ def info(label, obj, format='normal', treeLevel=0, dictKey='', color='normal'):
         for element in obj:
             prStr += hex(element) + ' '
         print(prStr + ']')
+        return
+
+    #numpy array numpy.ndarray
+    if isinstance(obj, numpy.ndarray):
+        print(f'Numpy array "{label}", length {len(obj)}')
+        if len(obj) < 10:
+            for el in obj:
+                print('\t' + str(el))
+        else:
+            for i in [0, 1]:
+                print('\t' + str(obj[i]))
+            print('\t...\t...\t...\t...\t...')
+            for i in [-2, -3]:
+                print('\t' + str(obj[i]))
         return
 
     #normal python types:
@@ -112,5 +124,7 @@ def dirInfo(label, obj, format='normal', treeLevel=0, color='normal'):
     print(cl.ENDC, end='', flush=True)
 
 def pprintInfo(obj):
-    '''Wrapper for pprint'''
+    '''Wrapper for pprint\n
+    Args:
+        obj [any]: object to pprint'''
     pprint.pprint(obj)

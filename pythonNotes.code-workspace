@@ -1,27 +1,16 @@
 {
 	"folders": [
 		{
+			"name": "binanceData",
+			"path": "../binanceData"
+		},
+		{
 			"name": "pythonNotes",
 			"path": "."
 		},
 		{
-			"name": "hwdriver",
-			"path": "../../../../../BACKUP/TI Computer/2022 07 02/2022 07 02/ASC/SENSING/CSPS/hwdriver"
-		},
-		{
 			"name": "minerSV",
 			"path": "../minerSV"
-		},
-		{
-			"name": "networkcheck",
-			"path": "../networkcheck"
-		},
-		{
-			"name": "lolMiner-releases-1.52a",
-			"path": "../lolMiner-releases-1.52a"
-		},
-		{
-			"path": "../../../../../BACKUP/TI Computer/2022 07 02/2022 07 02/ASC/SENSING/CSPS/TMAG5328"
 		}
 	],
 	"settings": {}
