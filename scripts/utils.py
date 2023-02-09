@@ -81,12 +81,12 @@ def printBoolTable(inDict):
                 boolStr += cl.HEADER + str(int(el))
         print(key + ': [ ' + boolStr + cl.ENDC + f' ] len={len(inDict[key])}')
 
-def dateStr(day):
-    '''Converts day of month int into two digit str\n
+def dateStr(day) -> str:
+    '''Converts day of month or month number int into two digit str\n
     Args:
-        day [int]: day of the month
+        day [int]: day of the month (or month number)
     Return:
-        [str]: day w/ leading zero ('00' to '31') '''
+        [str]: day w/ leading zero ('00' to '31'), (or to '12') '''
     if day < 10:
         return '0' + str(day)
     else:

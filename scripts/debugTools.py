@@ -1,7 +1,7 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-# Version 2.7
+# Version 2.71
 
 import ctypes
 import numpy
@@ -118,7 +118,7 @@ def dirInfo(label, obj, format='normal', treeLevel=0, color='normal'):
     for el in externalDirList:
         #replicate object.internalElement()
         objElement = getattr(obj, el)
-        info(el, objElement, format='normal', treeLevel=1, dictKey=el+': ')
+        info(el, objElement, treeLevel=1, dictKey=el+': ')
     
     #ENDC to fix printing back to normal
     print(cl.ENDC, end='', flush=True)

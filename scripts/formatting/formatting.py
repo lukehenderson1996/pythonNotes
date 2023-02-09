@@ -1,4 +1,4 @@
-"""Short description"""
+'''Short description'''
 
 # Author: xxxxx 
 # Version 0.0
@@ -12,7 +12,7 @@
 CONSTANT_NAME = "constant's content"
 
 def internal_functions_here(arg1, arg2, optionalArg3='normal'):
-    """Short description\n
+    '''Short description\n
     Args:
         arg1 [str]: short description\n
         arg2 [float]: short description\n
@@ -23,7 +23,7 @@ def internal_functions_here(arg1, arg2, optionalArg3='normal'):
     Return:
         [int] 0 for pass
     Notes:
-        notes here"""
+        notes here'''
     pass
     return 0
 

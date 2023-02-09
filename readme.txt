@@ -8,6 +8,8 @@ logger
     cannot accept None as input data for csv file, maybe other datatypes
 
 to do:
+general:
+learn pickle
 gui:
     '''for sendkeys: need error: Microsoft Visual C++ 14.0 is required. Get it with "Build Tools for 
     Visual Studio": https://visualstudio.microsoft.com/downloads/'''
