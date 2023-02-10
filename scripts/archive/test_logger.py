@@ -35,9 +35,14 @@ progStart = time.time()
 # capTime = time.time()
 # cgData = lg.ResultData(resultData=resultData, unit=unit, site=site, capTime=capTime)
 # cgData.resultData[0] = 18500
+# dt.info('cgData', cgData)
 
 # #test prefix, subfolder, etc functionality of logger
 # prefix = input('Enter subfolder/datalog prefix: ')
 # myLog = lg.LOGGER(logCols=['Time','Site'], prefix=prefix, quiet=False, csv=True, xml=True)
 # myNamedLog = lg.LOGGER(logCols=['Date','Time','Site'], filename='custom name', prefix=prefix, quiet=False)
 # debugLog = lg.LOGGER(None, prefix='debug\VERBOSE', quiet=False, xml=True)
+# #need further debug on subfolder usage
+# #for this example, it neglects to put VERBOSE in subfolder\\debug, just tries datalogs\\debug
+# #also will not check for existence of subfolder and create
+# #also needs to check for existence of datalogs folder and create if necessary

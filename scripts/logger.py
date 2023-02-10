@@ -118,7 +118,7 @@ class LOGGER:
             if xml:
                 if filenameList[1] is None:
                     filenameList[1] = DEFAULT_FILENAME_XML
-                filePathList.append(filePath + f'\\datalogs\\{prefix + filenameList[2] + fileSuffix}.xml')
+                filePathList.append(filePath + f'\\datalogs\\{prefix + filenameList[1] + fileSuffix}.xml')
         else:
             #absolute path
             filePathList = []
