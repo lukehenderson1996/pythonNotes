@@ -1,7 +1,7 @@
 """Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
 
 # Author: Luke Henderson
-# Version 2.4
+# Version 2.41
 
 import os
 import time
@@ -15,7 +15,7 @@ import colors as cl
 import debugTools as dt
 
 DEFAULT_UPDATE_DELAY = 100/1000 #(seconds)
-MAX_Q_SIZE = 15
+MAX_Q_SIZE = 50
 Q_MAXED_WARN_DELAY = 5 #(seconds)
 
 class LABEL:
@@ -203,7 +203,7 @@ class App(tk.Frame):
             #warn if too long
             if qsize > MAX_Q_SIZE:
                 if time.time()-self.lastQWarning > Q_MAXED_WARN_DELAY:
-                    self.printBoth(f'GUI Error: Queue too long, of length {qsize}')
+                    self.printBoth(f'GUI Warning: Queue too long, of length {qsize}')
                     self.lastQWarning = time.time()
             #process queue
             doneCollecting = False

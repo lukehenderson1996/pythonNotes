@@ -6,6 +6,7 @@ general
         see if -> int makes a difference now
 logger
     cannot accept None as input data for csv file, maybe other datatypes
+    cannot accept 'bytes' datatype
 
 to do:
 general:
