@@ -1,9 +1,11 @@
 """Miscellaneous assorted utilities"""
 
 # Author: Luke Henderson
-# Version 1.0
+# Version 1.1
 
 import sys
+import platform
+import time
 
 import colors as cl
 
@@ -126,3 +128,27 @@ def flRnd(num, decPlace=None):
     Return:
         [float] converted/rounded number'''
     return round(float(num), decPlace)
+
+
+def winCurrHandle():
+    '''Find the window handle of the cmd window\n
+    Return:
+        hwnd [Windows window handle]: handle of current window'''
+    if platform.system() == "Windows":
+        import win32gui
+        return win32gui.GetForegroundWindow()
+    else:
+        return None
+
+
+def winFocus(hwnd):
+    '''Focus on given window\n
+    Args:
+        hwnd [Windows window handle]: handle to bring into focus\n
+        '''
+    if platform.system() == "Windows":
+        import win32gui
+        time.sleep(.1)
+        win32gui.SetForegroundWindow(hwnd)
+    else:
+        cl.yellow("This machine is not running Windows, will skip focus utility")

@@ -1,11 +1,12 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-# Version 2.71
+# Version 2.8
 
 import ctypes
 import numpy
 import pprint
+import requests
 
 import colors as cl
 
@@ -52,6 +53,19 @@ def info(label, obj, treeLevel=0, dictKey='', color='normal'):
             for i in [-2, -3]:
                 print('\t' + str(obj[i]))
         return
+
+    #requests api response
+    if isinstance(obj, requests.models.Response):
+        print(f'Requests api response "{label}", status code: {obj.status_code}, reason: {obj.reason}')
+        info('url', obj.url)
+        info('elapsed', obj.elapsed)
+        info('headers', dict(obj.headers))
+        info('json', obj.json())
+        return
+    # #requests json
+    # if isinstance(obj, requests.models.Response.json):
+    #     print('Functionality for requests.models.Response.json not complete')
+    #     return
 
     #normal python types:
     #setup prefix/pretext
