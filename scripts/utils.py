@@ -1,11 +1,12 @@
 """Miscellaneous assorted utilities"""
 
 # Author: Luke Henderson
-# Version 1.1
+# Version 1.2
 
 import sys
 import platform
 import time
+from datetime import datetime
 
 import colors as cl
 
@@ -93,6 +94,36 @@ def dateStr(day) -> str:
         return '0' + str(day)
     else:
         return str(day)
+
+def humTime():
+    '''Returns current time and date in human readable format\n
+    Return:
+        [tuple]: humReadDate [str], humReadTime [str]
+    Usage: 
+        humReadDate, humReadTime = ut.humTime()'''
+    dateObj = datetime.now()
+    humReadDate = dateObj.strftime("20%y-%m-%d")
+    humReadTime = dateObj.strftime("%H:%M:%S.%f")[:-3]
+    return humReadDate, humReadTime
+
+def humTimeAndObj():
+    '''Returns current time and date in human readable format\n
+    \t and a matching datetime.now() object
+    Return:
+        [tuple]: humReadDate [str], humReadTime [str], dateObj [datetime.now()]
+    Usage:
+        humReadDate, humReadTime, dateObj = ut.humTimeAndObj()'''
+    dateObj = datetime.now()
+    humReadDate = dateObj.strftime("20%y-%m-%d")
+    humReadTime = dateObj.strftime("%H:%M:%S.%f")[:-3]
+    return humReadDate, humReadTime, dateObj
+
+def humTimeList():
+    '''Returns a list of current time and date strings in human readable format\n
+    Return:
+        [list]: [humReadDate [str], humReadTime [str]]'''
+    humReadDate, humReadTime = humTime()
+    return [humReadDate, humReadTime]
 
 def countFileLines(path):
     '''Fast way to count total lines in a file\n

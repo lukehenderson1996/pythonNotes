@@ -1,7 +1,7 @@
 """Logger class with multiple output options and data handling tools"""
 
 # Author: Luke Henderson
-# Version 1.0
+# Version 1.1
 
 import os
 import time
@@ -71,7 +71,7 @@ class LOGGER:
         """
 
     def __init__(self, logCols=None, filename=None, prefix='', quiet=True, \
-        csv=False, xml=False, absPath=None):
+        csv=False, xml=False, absPath=None, persistent=False):
         """Logger with various output options\n
         Args:
             logCols [list of str]: populates the headers if not None\n
@@ -83,6 +83,8 @@ class LOGGER:
             absPath [str, optional]: include file extension
                 filename parameter will be ignored\n
                 changes mode of logger to csv only, not tested for xml
+            persistent [bool, optional]: create unique files per run (False)
+                or use same file if already exists (true)
         Notes:
             Number of logCols must exacly equal length of list when\n
             calling simpLog()"""
@@ -95,9 +97,12 @@ class LOGGER:
         if not (csv or xml):
             csv = True #default to csv
         #for time at suffix:
-        if not prefix=='':
-            prefix += ' '
-        fileSuffix = ' ' + str(time.time()).split('.')[0] #just the end for now
+        if filename is None:
+            if not prefix=='':
+                prefix += ' '
+            fileSuffix = ' ' + str(time.time()).split('.')[0] #just the end for now
+        else:
+            fileSuffix = ''
         # #for time at prefix:
         # if prefix == '':
         #     prefix = str(time.time()).split('.')[0] + ' ' + prefix
@@ -131,9 +136,14 @@ class LOGGER:
                 cl.red('Error: Unsupported file extension: ' + fileExt)
                 raise Exception
             thisFilePath = el
-            while os.path.exists(thisFilePath):
-                thisFilePath = thisFilePath[:-4]
-                thisFilePath += '-1.' + fileExt
+            appending = False
+            if not persistent:
+                while os.path.exists(thisFilePath):
+                    thisFilePath = thisFilePath[:-4]
+                    thisFilePath += '-1.' + fileExt
+            else:
+                if os.path.exists(thisFilePath):
+                    appending = True
             if not quiet:
                 print('Saving ' + fileExt + ' datalog as:')
                 print('\t' + thisFilePath)
@@ -141,17 +151,18 @@ class LOGGER:
             self.fileList[-1].ext = fileExt
         
         #write headers
-        for el in self.fileList:
-            if (logCols is None) or el.ext == 'xml':
-                el.write(DEFAULT_HEADER[el.ext])
-                el.flush()
-            else:
-                if el.ext == 'csv':
-                    headerStr = logCols[0]
-                    for elem in logCols[1:]:
-                        headerStr += ',' + elem
-                    el.write(headerStr + '\n')
+        if not appending:
+            for el in self.fileList:
+                if (logCols is None) or el.ext == 'xml':
+                    el.write(DEFAULT_HEADER[el.ext])
                     el.flush()
+                else:
+                    if el.ext == 'csv':
+                        headerStr = logCols[0]
+                        for elem in logCols[1:]:
+                            headerStr += ',' + elem
+                        el.write(headerStr + '\n')
+                        el.flush()
 
     def __del__(self):
         if not self.filesClosed:
@@ -196,6 +207,10 @@ class LOGGER:
                 self.xmlCheckTag(currTime)
                 el.write(f'<{currTime}>\n{xmlEntryCont}</{currTime}>\n\n')
                 el.flush()
+
+    def logBlankRow(self):
+        '''Logs a blank csv row\n'''
+        self.simpLog(['']*len(self.logCols))
 
     def log(self, resultData):
         '''to be used with ResultData class
