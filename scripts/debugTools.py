@@ -1,12 +1,9 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-# Version 2.8
+# Version 2.9
 
-import ctypes
-import numpy
-import pprint
-import requests
+import sys
 
 import colors as cl
 
@@ -27,45 +24,53 @@ def info(label, obj, treeLevel=0, dictKey='', color='normal'):
             assumed using "import debugTools as dt"
         advanced usage example:
             dt.info('myObj', myObj, color='OKBLUE')
-        internal arguments are optional and normally just used for recursion"""
+        internal arguments are optional and normally just used for recursion
+        supported libraries:
+            numpy, pprint, requests, ctypes"""
     prefix = '\t'*treeLevel + dictKey
     if not color=='normal':
         prefix = getattr(cl, color) + prefix
 
     #ctypes array
-    if isinstance(obj, ctypes.Array):
-        prStr = '\t' + 'Contents: [ '
-        for element in obj:
-            prStr += hex(element) + ' '
-        print(prStr + ']')
-        return
+    if 'ctypes' in sys.modules:
+        import ctypes
+        if isinstance(obj, ctypes.Array):
+            prStr = '\t' + 'Contents: [ '
+            for element in obj:
+                prStr += hex(element) + ' '
+            print(prStr + ']')
+            return
 
     #numpy array numpy.ndarray
-    if isinstance(obj, numpy.ndarray):
-        print(f'Numpy array "{label}", length {len(obj)}')
-        if len(obj) < 10:
-            for el in obj:
-                print('\t' + str(el))
-        else:
-            for i in [0, 1]:
-                print('\t' + str(obj[i]))
-            print('\t...\t...\t...\t...\t...')
-            for i in [-2, -3]:
-                print('\t' + str(obj[i]))
-        return
+    if 'numpy' in sys.modules:
+        import numpy
+        if isinstance(obj, numpy.ndarray):
+            print(f'Numpy array "{label}", length {len(obj)}')
+            if len(obj) < 10:
+                for el in obj:
+                    print('\t' + str(el))
+            else:
+                for i in [0, 1]:
+                    print('\t' + str(obj[i]))
+                print('\t...\t...\t...\t...\t...')
+                for i in [-2, -3]:
+                    print('\t' + str(obj[i]))
+            return
 
     #requests api response
-    if isinstance(obj, requests.models.Response):
-        print(f'Requests api response "{label}", status code: {obj.status_code}, reason: {obj.reason}')
-        info('url', obj.url)
-        info('elapsed', obj.elapsed)
-        info('headers', dict(obj.headers))
-        info('json', obj.json())
-        return
-    # #requests json
-    # if isinstance(obj, requests.models.Response.json):
-    #     print('Functionality for requests.models.Response.json not complete')
-    #     return
+    if 'requests' in sys.modules:
+        import requests
+        if isinstance(obj, requests.models.Response):
+            print(f'Requests api response "{label}", status code: {obj.status_code}, reason: {obj.reason}')
+            info('url', obj.url)
+            info('elapsed', obj.elapsed)
+            info('headers', dict(obj.headers))
+            info('json', obj.json())
+            return
+        # #requests json
+        # if isinstance(obj, requests.models.Response.json):
+        #     print('Functionality for requests.models.Response.json not complete')
+        #     return
 
     #normal python types:
     #setup prefix/pretext
@@ -141,4 +146,8 @@ def pprintInfo(obj):
     '''Wrapper for pprint\n
     Args:
         obj [any]: object to pprint'''
-    pprint.pprint(obj)
+    if 'pprint' in sys.modules:
+        import pprint
+        pprint.pprint(obj)
+    else:
+        cl.red('Error, pprint not installed')
