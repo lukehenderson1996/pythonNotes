@@ -1,7 +1,7 @@
 """Miscellaneous assorted utilities"""
 
 # Author: Luke Henderson
-# Version 1.2
+# Version 1.21
 
 import sys
 import platform
@@ -148,7 +148,6 @@ def countGenerator(reader):
         yield b
         b = reader(1024 * 1024)
 
-
 def flRnd(num, decPlace=None):
     '''Converts to float and rounds\n
     Args:
@@ -160,7 +159,6 @@ def flRnd(num, decPlace=None):
         [float] converted/rounded number'''
     return round(float(num), decPlace)
 
-
 def winCurrHandle():
     '''Find the window handle of the cmd window\n
     Return:
@@ -170,7 +168,6 @@ def winCurrHandle():
         return win32gui.GetForegroundWindow()
     else:
         return None
-
 
 def winFocus(hwnd):
     '''Focus on given window\n

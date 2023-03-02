@@ -1,12 +1,12 @@
 """Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
 
 # Author: Luke Henderson
-# Version 2.41
+# Version 2.42
 
 import os
 import time
 from datetime import datetime
-import contextlib
+# import contextlib
 import tkinter as tk
 from threading import Thread
 import queue

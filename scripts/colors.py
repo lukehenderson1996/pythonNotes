@@ -1,10 +1,13 @@
-'''Module for easy Windows cmd colored text'''
+'''Module for easy colored text on terminal prints'''
 
 # Author: Luke Henderson
-# Version 0.7
+# Version 0.8
 
 import os
-os.system('') #enable VT100 Escape Sequence for WINDOWS 10 Ver. 1607
+import platform
+
+if platform.system() == "Windows":
+    os.system('') #enable VT100 escape sequence for Windows 10
 
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
