@@ -1,14 +1,16 @@
 """Miscellaneous assorted utilities"""
 
 # Author: Luke Henderson
-# Version 1.21
+# Version 1.22
 
 import sys
+import os
 import platform
 import time
 from datetime import datetime
 
 import colors as cl
+import debugTools as dt
 
 class printProgress:
     """Simple percent of progress printout, non blocking"""
@@ -66,7 +68,7 @@ class ProgressBar:
         sys.stdout.flush()
 
 def pause():
-    '''Like os.system('pause') but with a newline'''
+    '''Like os.system('pause') in Windows but with a newline'''
     input('Press any key to continue . . .\n')
 
 def printBoolTable(inDict):
@@ -165,15 +167,50 @@ def winCurrHandle():
         hwnd [Windows window handle]: handle of current window'''
     if platform.system() == "Windows":
         import win32gui
-        return win32gui.GetForegroundWindow()
+
+        windowsList = []
+        def callback(handle, _):
+            if win32gui.IsWindowVisible(handle):
+                windowTitle = win32gui.GetWindowText(handle)
+                if windowTitle:
+                    windowClass = win32gui.GetClassName(handle)
+                    windowsList.append((windowTitle, windowClass))
+            return True
+        win32gui.EnumWindows(callback, None)
+        
+        filename = os.path.basename(sys.argv[0])
+
+        #get window name
+        className = None
+        windowName = None
+        AlreadyFound = False
+        for item in windowsList:
+            if 'niceHash' in item[0] and 'ConsoleWindowClass' in item[1]:
+                if AlreadyFound:
+                    cl.red(f'Error (utils.py): Multiple window hanldes found for file "{filename}"')
+                    exit()
+                else:
+                    AlreadyFound = True
+                    className = item[1]
+                    windowName = item[0]
+        if windowName is None or className is None:
+            cl.red(f'Error (utils.py): Window hanlde not found for file "{filename}"')
+            exit()
+
+        hwnd = win32gui.FindWindow(className, windowName)
+        # hwnd = win32gui.GetForegroundWindow()
+        return hwnd
     else:
         return None
 
 def winFocus(hwnd):
     '''Focus on given window\n
     Args:
-        hwnd [Windows window handle]: handle to bring into focus\n
-        '''
+        hwnd [Windows window handle]: handle to bring into focus
+    Usage:
+        hwnd = ut.winCurrHandle()\n
+        #start gui\n
+        ut.winFocus(hwnd)'''
     if platform.system() == "Windows":
         import win32gui
         time.sleep(.1)

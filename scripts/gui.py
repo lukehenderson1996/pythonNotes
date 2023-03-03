@@ -158,11 +158,11 @@ class App(tk.Frame):
         self.label2 = tk.Label(text="", fg="Black", font=("Consolas", self.rollPrHt), justify='left')
         self.label2.place(x=0,y=0)
         self.label = tk.Label(text="", fg="Red", font=("Helvetica", 18))
-        self.label.place(x=380,y=5)
+        self.label.place(x=500,y=5)
 
         # create button, link it to clickExitButton()
         self.exitButton = tk.Button(text="Quit", command=self.clickExitButton)
-        self.exitButton.place(x=550, y=0)
+        self.exitButton.place(x=670, y=5)
 
         #init internal variables
         self.startGUI = False
