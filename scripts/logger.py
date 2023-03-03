@@ -1,7 +1,7 @@
 """Logger class with multiple output options and data handling tools"""
 
 # Author: Luke Henderson
-# Version 1.1
+# Version 1.2
 
 import os
 import time
@@ -9,6 +9,7 @@ from datetime import datetime
 
 import colors as cl
 import debugTools as dt
+import utils as ut
 
 METRIC_PREFIX_SCALE = {
 "f":-15,
@@ -70,7 +71,7 @@ class LOGGER:
         close() will close all files and finalize xml formatting
         """
 
-    def __init__(self, logCols=None, filename=None, prefix='', quiet=True, \
+    def __init__(self, logCols=None, prefix='', filename=None, quiet=True, \
         csv=False, xml=False, absPath=None, persistent=False):
         """Logger with various output options\n
         Args:
@@ -83,8 +84,8 @@ class LOGGER:
             absPath [str, optional]: include file extension
                 filename parameter will be ignored\n
                 changes mode of logger to csv only, not tested for xml
-            persistent [bool, optional]: create unique files per run (False)
-                or use same file if already exists (true)
+            persistent [bool, optional]: use same file if already exists (true)
+                or create unique files per run (False)
         Notes:
             Number of logCols must exacly equal length of list when\n
             calling simpLog()"""
@@ -209,7 +210,7 @@ class LOGGER:
                 el.flush()
 
     def logBlankRow(self):
-        '''Logs a blank csv row\n'''
+        '''Logs a blank csv row'''
         self.simpLog(['']*len(self.logCols))
 
     def log(self, resultData):
@@ -294,3 +295,38 @@ class LOGGER:
             else:
                 el.close()
         self.filesClosed = True
+
+class ManagedLog:
+    '''Managed Log'''
+
+    def __init__(self, logCols, prefix=''):
+        '''Manages a single log per day regardless of program interruptions\n
+        Args:
+            logCols [list of str]: populates the headers if not None\n
+            prefix [str, optional]: prefix to file names, default ''\n
+        Notes:
+            filename will be in the following format: 
+                [prefix]YYYY-MM-DD.csv
+            Only works for csv files for now'''
+        self.logCols = logCols
+        self.prefix = prefix
+
+        self.log = None
+        self.prevLoggedDate = '1970-01-01' #date the last datapoint was logged for, human readable time from utils.py
+        
+
+    def manLog(self, dataInput):
+        '''Managed log: \n
+        Args:
+            data [list of str/int/float]: Any data input to be logged under
+                previously defined columns (self.logCols)'''
+        humReadDate, humReadTime = ut.humTime()
+        if humReadDate != self.prevLoggedDate:
+            cl.purple(f'Managed log: logging for new day, filename: {self.prefix}{humReadDate}.csv')
+            self.log = LOGGER(logCols=self.logCols, filename=f'{self.prefix}{humReadDate}', persistent=True)
+        self.log.simpLog(dataInput)
+        self.prevLoggedDate = humReadDate
+
+    def logBlankRow(self):
+        '''Logs a blank csv row'''
+        self.manLog(['']*len(self.logCols))
