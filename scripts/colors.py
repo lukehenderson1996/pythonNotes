@@ -1,10 +1,11 @@
 '''Module for easy colored text on terminal prints'''
 
 # Author: Luke Henderson
-# Version 0.8
+__version__ = '0.8'
 
 import os
 import platform
+# import colorama
 
 if platform.system() == "Windows":
     os.system('') #enable VT100 escape sequence for Windows 10

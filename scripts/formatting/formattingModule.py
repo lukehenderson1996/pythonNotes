@@ -1,14 +1,14 @@
 '''Short description'''
 
 # Author: xxxxx
-# Version 0.0
+__version__ = '0.0'
 
 'external imports here'
 
 'internal imports here'
 
 class NAME: #or, ClassName
-    '''Short description'''
+    '''NAME class'''
     internalConstant = 2e-6
 
     def __init__(self, arg1, arg2, optionalArg3='normal'):

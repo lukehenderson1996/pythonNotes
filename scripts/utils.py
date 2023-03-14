@@ -1,7 +1,7 @@
 """Miscellaneous assorted utilities"""
 
 # Author: Luke Henderson
-# Version 1.22
+__version__ = '1.25'
 
 import sys
 import os
@@ -211,9 +211,15 @@ def winFocus(hwnd):
         hwnd = ut.winCurrHandle()\n
         #start gui\n
         ut.winFocus(hwnd)'''
+    
     if platform.system() == "Windows":
         import win32gui
-        time.sleep(.1)
-        win32gui.SetForegroundWindow(hwnd)
+        import pywintypes
+        try:
+            time.sleep(.1)
+            win32gui.SetForegroundWindow(hwnd)
+        except pywintypes.error: 
+            cl.yellow('Warning: utils.py unable to focus cmd window')
     else:
         cl.yellow("This machine is not running Windows, will skip focus utility")
+    

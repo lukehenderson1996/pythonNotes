@@ -1,7 +1,7 @@
 """Logger class with multiple output options and data handling tools"""
 
 # Author: Luke Henderson
-# Version 1.2
+__version__ = '1.2'
 
 import os
 import time

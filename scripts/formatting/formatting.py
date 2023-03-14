@@ -1,7 +1,7 @@
 '''Short description'''
 
 # Author: xxxxx 
-# Version 0.0
+__version__ = '0.0'
 
 'external imports here'
 

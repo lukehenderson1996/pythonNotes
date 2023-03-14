@@ -1,7 +1,7 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-# Version 2.9
+__version__ = '3.0'
 
 import sys
 
@@ -151,3 +151,35 @@ def pprintInfo(obj):
         pprint.pprint(obj)
     else:
         cl.red('Error, pprint not installed')
+
+def objToLiteral(obj):
+    '''Converts any object to pythonic literal code\n
+    Args:
+        obj [any]'''
+    if isinstance(obj, (int, float, bool)):
+        return str(obj)
+    elif isinstance(obj, str):
+        return f"'{obj}'"
+    elif isinstance(obj, list):
+        items = ", ".join(objToLiteral(item) for item in obj)
+        if len(items) > 100:
+            items = ", \n\t".join(objToLiteral(item) for item in obj)
+        return f"[{items}]"
+    elif isinstance(obj, dict):
+        items = ", ".join(f"{objToLiteral(key)}: {objToLiteral(value)}" for key, value in obj.items())
+        if False: #len(items) > 100:
+            cl.blue('IM IN HERE ')
+            items = ", \n\t".join(f"{objToLiteral(key)}: {objToLiteral(value)}" for key, value in obj.items())
+        return f"{{{items}}}"
+    else:
+        return repr(obj)
+    
+def genPyLiteral(label, obj):
+    '''Usage: 
+        print(ut.humTimeList())
+        cl.blue('printing literal obj: ')
+        dt.genPyLiteral('literalsName', obj)
+        '''
+    print(f'{label} = {objToLiteral(obj)}')
+
+
