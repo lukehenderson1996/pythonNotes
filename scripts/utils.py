@@ -1,7 +1,7 @@
 """Miscellaneous assorted utilities"""
 
 # Author: Luke Henderson
-__version__ = '1.25'
+__version__ = '1.26'
 
 import sys
 import os
@@ -132,6 +132,16 @@ def humTimeList():
         [list]: [humReadDate [str], humReadTime [str]]'''
     humReadDate, humReadTime = humTime()
     return [humReadDate, humReadTime]
+
+def humTimeListAndTS():
+    '''Returns a list of current time and date strings in human readable format\n
+    Return:
+        [list]: [humReadDate [str], humReadTime [str]]'''
+    timestamp = time.time()
+    dateObj = datetime.fromtimestamp(timestamp)
+    humReadDate = dateObj.strftime("20%y-%m-%d")
+    humReadTime = dateObj.strftime("%H:%M:%S.%f")[:-3]
+    return [humReadDate, humReadTime], timestamp 
 
 def countFileLines(path):
     '''Fast way to count total lines in a file\n

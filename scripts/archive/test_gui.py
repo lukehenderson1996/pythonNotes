@@ -19,6 +19,16 @@ guiQ = queue.Queue()
 dw = gui.GUI(guiQ, updateDelay=0.05, quiet=True) 
 dw.start()
 
+# #BRING FOCUS BACK TO CMD WINDOW (from chatGPT)
+# import win32gui
+# #Find the window handle of the cmd window (from chatGPT)
+# hwnd = win32gui.GetForegroundWindow()
+# #start GUI
+# dw.start()
+# # Bring the cmd window to the front and set the focus (from chatGPT)
+# time.sleep(.1)
+# win32gui.SetForegroundWindow(hwnd)
+
 # #simple tests
 # guiQ.put('Message from beyond')
 # guiQ.put(1)
