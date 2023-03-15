@@ -1,7 +1,7 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-__version__ = '3.1'
+__version__ = '3.11'
 
 import sys
 
@@ -62,10 +62,10 @@ def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
         import requests
         if isinstance(obj, requests.models.Response):
             print(f'Requests api response "{lb}", status code: {obj.status_code}, reason: {obj.reason}')
-            info('url', obj.url)
-            info('elapsed', obj.elapsed)
-            info('headers', dict(obj.headers))
-            info('json', obj.json())
+            info(obj.url, 'url')
+            info(obj.elapsed, 'elapsed')
+            info(dict(obj.headers), 'headers')
+            info(obj.json(), 'json')
             return
         # #requests json
         # if isinstance(obj, requests.models.Response.json):
@@ -95,9 +95,9 @@ def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
             #valid iterable, iterate and print info
             for el in obj:
                 if isinstance(obj, dict):
-                    info(type(obj[el]), obj[el], treeLevel=treeLevel+1, dictKey= str(el)+': ')
+                    info(obj[el], type(obj[el]), treeLevel=treeLevel+1, dictKey= str(el)+': ')
                 else:
-                    info(type(el), el, treeLevel=treeLevel+1)
+                    info(el, type(el), treeLevel=treeLevel+1)
     
 
     #ENDC to fix printing back to normal
@@ -137,7 +137,7 @@ def dirInfo(obj, lb='Object', format='normal', treeLevel=0, color='normal'):
     for el in externalDirList:
         #replicate object.internalElement()
         objElement = getattr(obj, el)
-        info(el, objElement, treeLevel=1, dictKey=el+': ')
+        info(objElement, el, treeLevel=1, dictKey=el+': ')
     
     #ENDC to fix printing back to normal
     print(cl.ENDC, end='', flush=True)

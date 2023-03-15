@@ -96,6 +96,12 @@ def dateStr(day) -> str:
         return '0' + str(day)
     else:
         return str(day)
+    
+def toTimeStamp(dateAndTimeStr):
+    '''input format: '2023-03-14 19:56:15.963'
+    '''
+    timeObj = datetime.strptime(dateAndTimeStr, '%Y-%m-%d %H:%M:%S.%f')
+    return time.mktime(timeObj.timetuple()) + timeObj.microsecond / 1e6
 
 def humTime():
     '''Returns current time and date in human readable format\n
