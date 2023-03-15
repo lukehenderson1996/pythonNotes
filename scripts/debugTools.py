@@ -1,17 +1,17 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-__version__ = '3.0'
+__version__ = '3.1'
 
 import sys
 
 import colors as cl
 
-def info(label, obj, treeLevel=0, dictKey='', color='normal'):
+def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
     """Prints info about an object\n
     Args:
-        label [str]: the label name of the object to be analyzed\n
         obj [any]: the object to be analyzed\n
+        lb [str, optional]: the label name of the object to be analyzed\n
         treeLevel [int, internal]: can use for tabbing, used internally
             for recursive tabbing
         dictKey [str, internal]: used internally for printing out dictionary
@@ -20,10 +20,10 @@ def info(label, obj, treeLevel=0, dictKey='', color='normal'):
             uses colors.py constants to change printer color\n
             example: use 'OKBLUE' for colors.OKBLUE
     Notes:
-        usage example: dt.info('myObj', myObj)
+        usage example: dt.info(myObj) or dt.info(myObj, 'myObj')
             assumed using "import debugTools as dt"
         advanced usage example:
-            dt.info('myObj', myObj, color='OKBLUE')
+            dt.info(myObj, 'myObj', color='OKBLUE')
         internal arguments are optional and normally just used for recursion
         supported libraries:
             numpy, pprint, requests, ctypes"""
@@ -45,7 +45,7 @@ def info(label, obj, treeLevel=0, dictKey='', color='normal'):
     if 'numpy' in sys.modules:
         import numpy
         if isinstance(obj, numpy.ndarray):
-            print(f'Numpy array "{label}", length {len(obj)}')
+            print(f'Numpy array "{lb}", length {len(obj)}')
             if len(obj) < 10:
                 for el in obj:
                     print('\t' + str(el))
@@ -61,7 +61,7 @@ def info(label, obj, treeLevel=0, dictKey='', color='normal'):
     if 'requests' in sys.modules:
         import requests
         if isinstance(obj, requests.models.Response):
-            print(f'Requests api response "{label}", status code: {obj.status_code}, reason: {obj.reason}')
+            print(f'Requests api response "{lb}", status code: {obj.status_code}, reason: {obj.reason}')
             info('url', obj.url)
             info('elapsed', obj.elapsed)
             info('headers', dict(obj.headers))
@@ -75,7 +75,7 @@ def info(label, obj, treeLevel=0, dictKey='', color='normal'):
     #normal python types:
     #setup prefix/pretext
     if treeLevel==0:
-        preText = prefix + f'{label} is '
+        preText = prefix + f'{lb} is '
     else:
         preText = prefix
     #analyze
@@ -103,7 +103,7 @@ def info(label, obj, treeLevel=0, dictKey='', color='normal'):
     #ENDC to fix printing back to normal
     print(cl.ENDC, end='', flush=True)
 
-def dirInfo(label, obj, format='normal', treeLevel=0, color='normal'):
+def dirInfo(obj, lb='Object', format='normal', treeLevel=0, color='normal'):
     """Prints and analyzes dir() info about an object\n
     Args:
         label [str]: the label name of the object to be analyzed\n
@@ -127,13 +127,13 @@ def dirInfo(label, obj, format='normal', treeLevel=0, color='normal'):
         else:
             externalDirList.append(el)
     if format=='normal':
-        print('\n' + f'Internal dir() of {label}: ')
+        print('\n' + f'Internal dir() of {lb}: ')
         print(internalDirList)
-        print('\n' + f'External dir() of {label}: ')
+        print('\n' + f'External dir() of {lb}: ')
         print(externalDirList)
         print('\n')
 
-    print(f'Stepping through external dir() of {label}:')
+    print(f'Stepping through external dir() of {lb}:')
     for el in externalDirList:
         #replicate object.internalElement()
         objElement = getattr(obj, el)
@@ -174,12 +174,16 @@ def objToLiteral(obj):
     else:
         return repr(obj)
     
-def genPyLiteral(label, obj):
-    '''Usage: 
+def genPyLiteral(obj, lb='myVar'):
+    '''
+    Args:
+        obj [any]:
+        lb [str, optional]:
+    Usage: 
         print(ut.humTimeList())
         cl.blue('printing literal obj: ')
-        dt.genPyLiteral('literalsName', obj)
+        dt.genPyLiteral(obj, 'literalsName')
         '''
-    print(f'{label} = {objToLiteral(obj)}')
+    print(f'{lb} = {objToLiteral(obj)}')
 
 
