@@ -1,7 +1,7 @@
 """Miscellaneous assorted utilities"""
 
 # Author: Luke Henderson
-__version__ = '1.26'
+__version__ = '1.3'
 
 import sys
 import os
@@ -55,11 +55,13 @@ class ProgressBar:
         self.len = len
         self.dispLen = dispLen
         self.lastPercent = 0
+        self.update(-1) #gets corrected to 0 in update()
 
     def update(self, currIdx):
         '''Call to determine if update should be printed/print\n
         Args:
             currIdx [int]: Current index of progress, to be incremented up towards self.len'''
+        currIdx += 1 #ensures progress bar finishes completely
         done = round(self.dispLen * currIdx / self.len)
         if self.dispLen-done == 1:
             sys.stdout.write("\r[%s]" % ('#' * (self.dispLen)) )  
@@ -134,9 +136,10 @@ def humTimeList():
     return [humReadDate, humReadTime]
 
 def humTimeListAndTS():
-    '''Returns a list of current time and date strings in human readable format\n
+    '''Returns a list of current time and date strings in human readable format, \n
+        plus the corresponding timestamp in seconds
     Return:
-        [list]: [humReadDate [str], humReadTime [str]]'''
+        [tuple]: [list]: [humReadDate [str], humReadTime [str]], [float]: timestamp'''
     timestamp = time.time()
     dateObj = datetime.fromtimestamp(timestamp)
     humReadDate = dateObj.strftime("20%y-%m-%d")
@@ -238,4 +241,18 @@ def winFocus(hwnd):
             cl.yellow('Warning: utils.py unable to focus cmd window')
     else:
         cl.yellow("This machine is not running Windows, will skip focus utility")
+
+def listConv(listOfDict):
+    '''Converts list of dictionaries to dictionary of lists\n
+    Args:
+        listOfDict [list of dicts]: 
+    Return:
+        [dict] dict of lists'''
+    ret = {}
+    for item in listOfDict:
+        for key, value in item.items():
+            if key not in ret:
+                ret[key] = []
+            ret[key].append(value)
+    return ret
     
