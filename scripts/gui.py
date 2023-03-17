@@ -1,13 +1,14 @@
 """Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
 
 # Author: Luke Henderson
-__version__ = '2.42'
+__version__ = '2.5'
 
 import os
 import time
 from datetime import datetime
 # import contextlib
 import tkinter as tk
+from PIL import Image, ImageTk
 from threading import Thread
 import queue
 
@@ -41,6 +42,7 @@ class LABEL:
                 textInd
                     use this to create a number or string indicator with label on top.\n
                     cannot change location after creation
+                image
         Usage (outdated):
             'myLabel', "~Label's Text~", 'Blue', 18
         """
@@ -92,7 +94,7 @@ class LABEL:
 class GUI:
     """Outer layer to drive App class in a separate thread"""
 
-    def __init__(self, guiQ, windowTitle='Python GUI', updateDelay=None, quiet=False):
+    def __init__(self, guiQ, windowTitle='Python GUI', updateDelay=None, quiet=False, windowGeom=None, windowMax=False):
         """Initialize the gui\n
         Args:
             guiQ [queue.queue object]: queue of tasks to be consumed/executed
@@ -105,9 +107,10 @@ class GUI:
                         list[0] [str]: The function to be called, such as aPrint\n
                         list[1] [any]: passed as argument to called function
                         example: guiQ.put(['aPrint', 'Hello, world!'])
-            windowTitle [str, optional]: the object to be analyzed\n
-            updateDelay [float, seconds, optional]: timing to update with
-            quiet [bool, optional]: controls whether gui/app classes will print to CMD
+            windowTitle [str, optional]: The title of the gui window\n
+            updateDelay [float, seconds, optional]: timing to update with \n
+            quiet [bool, optional]: controls whether gui/app classes will print to CMD\n
+            windowMax [bool, optional]: whether to have the window max size
         Notes:
             Can set these variables after init:
                 windowGeom [str, currently not in use]: size/location of gui window. format:
@@ -117,8 +120,10 @@ class GUI:
         self.windowTitle = windowTitle
         self.updateDelay = updateDelay
         self.quiet = quiet
-        #extra customization to be set after init
-        self.windowGeom = '768x792+-8+0' #'766x792+-7+0' #currently not in use
+        self.windowMax = windowMax
+        #extra customization, needs work
+        self.windowGeom = windowGeom #'768x792+-8+0' #'766x792+-7+0' #currently not in use
+        self.windowMax = windowMax
 
     def start(self):
         """Starts gui in separate thread, non blocking"""
@@ -129,18 +134,20 @@ class GUI:
         """blocking init and mainloop, to be threaded"""
         #init app
         self.root = tk.Tk()
-        self.app=App(self.guiQ, self.updateDelay, self.quiet, self.root)
+        self.app=App(self.guiQ, self.updateDelay, self.quiet, self.root, windowMax=self.windowMax)
         #set init args
         self.root.wm_title(self.windowTitle)
-        self.root.geometry(self.windowGeom) #to prevent eye sore of extra window movement
+        if self.windowGeom != None:
+            self.root.geometry(self.windowGeom) #to prevent eye sore of extra window movement
         self.root.state('zoomed')
 
         #start mainloop
         self.app.startGUI = True
+        self.root.protocol("WM_DELETE_WINDOW", self.app.close) #__del__
         self.root.mainloop()
 
 class App(tk.Frame):
-    def __init__(self, quiQ, updateDelay, quiet, master=None):
+    def __init__(self, quiQ, updateDelay, quiet, master=None, windowMax=False):
         # self.root
         tk.Frame.__init__(self, master)
         # tk.Frame.wm_title('windowTitle')
@@ -152,6 +159,7 @@ class App(tk.Frame):
         self.updateDelay = updateDelay
         self.quiet = quiet
         self.master = master 
+        self.windowMax = windowMax
         
         #init default labels
         self.rollPrHt = 11 #11
@@ -172,12 +180,16 @@ class App(tk.Frame):
         self.kill = False
         self.killClearance = False
         self.userLabels = {}
+        self.userImages = {}
         self.firstRun = True
 
         #start main outer loop
         if not self.quiet:
             cl.blue('Successful start ' + cl.CMDCYAN + 'GUI thread')
         self.outerLoop()
+
+    def close(self): #__del__
+        self.master.destroy()
 
     """---------------------------------------GUI main "outer" loop---------------------------------------"""
     def outerLoop(self):
@@ -259,8 +271,9 @@ class App(tk.Frame):
         self.wY = int(self.master.winfo_rooty()-23)
         # print(f'Current geom: {self.master.winfo_geometry()}')
         # print(f'Fixed:        {self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
-        self.master.state('normal')
-        self.master.wm_geometry(f'{self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
+        if not self.windowMax:
+            self.master.state('normal')
+            self.master.wm_geometry(f'{self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
 
     def killGUI(self):
         # while not self.killClearance:
@@ -319,11 +332,30 @@ class App(tk.Frame):
             lb [obj of class LABEL]: input parameter object. (short for label)\n
         Vars from this class' __init__():
             self.userLabels = {}"""
-        if lb.id in self.userLabels:
-            self.userLabels[lb.id].configure(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
+        if not (lb.id in self.userLabels):
+            #init label
+            if lb.labType=='text' or lb.labType=='textInd':
+                #text label (or textInd)
+                self.userLabels[lb.id] = tk.Label(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
+            else:
+                #assume image label
+                image = Image.open(lb.labelText)
+                image = image.resize((800, 343), Image.ANTIALIAS)
+                self.userImages[lb.id] = ImageTk.PhotoImage(image)
+                self.userLabels[lb.id] = tk.Label(image=self.userImages[lb.id])
         else:
-            self.userLabels[lb.id] = tk.Label(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
+            #update label
+            if lb.labType=='text' or lb.labType=='textInd':
+                #text label (or textInd)
+                self.userLabels[lb.id].configure(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
+            else:
+                #assume image label
+                image = Image.open(lb.labelText)
+                image = image.resize((800, 343), Image.ANTIALIAS)
+                self.userImages[lb.id] = ImageTk.PhotoImage(image)
+                self.userLabels[lb.id].configure(image=self.userImages[lb.id])
         self.userLabels[lb.id].place(x=lb.x,y=lb.y)
+        
 
         if lb.labType == 'textInd':
             id2 = lb.id + 0.1
