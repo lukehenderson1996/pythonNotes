@@ -1,7 +1,7 @@
 """Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
 
 # Author: Luke Henderson
-__version__ = '2.5'
+__version__ = '2.6'
 
 import os
 import time
@@ -9,6 +9,7 @@ from datetime import datetime
 # import contextlib
 import tkinter as tk
 from PIL import Image, ImageTk
+from tkinter import ttk
 from threading import Thread
 import queue
 
@@ -180,8 +181,15 @@ class App(tk.Frame):
         self.kill = False
         self.killClearance = False
         self.userLabels = {}
-        self.userImages = {}
         self.firstRun = True
+        #image stuff
+        self.userImages = {}
+        self.notebook = None
+        self.tab1 = None
+        self.tab2 = None
+        self.tab3 = None
+        self.tab4 = None
+
 
         #start main outer loop
         if not self.quiet:
@@ -339,10 +347,45 @@ class App(tk.Frame):
                 self.userLabels[lb.id] = tk.Label(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
             else:
                 #assume image label
-                image = Image.open(lb.labelText)
-                image = image.resize((800, 343), Image.ANTIALIAS)
-                self.userImages[lb.id] = ImageTk.PhotoImage(image)
-                self.userLabels[lb.id] = tk.Label(image=self.userImages[lb.id])
+                if hasattr(lb, 'notebook'):
+                    #notebook of images
+                    if lb.notebook == 'init':
+                        self.notebook = tk.ttk.Notebook(self.master)
+                        self.notebook.place(x=lb.x,y=lb.y)
+                        self.tab1 = ttk.Frame(self.notebook)
+                        self.tab2 = ttk.Frame(self.notebook)
+                        self.tab3 = ttk.Frame(self.notebook)
+                        self.tab4 = ttk.Frame(self.notebook)
+                        self.notebook.add(self.tab1, text="Image 1")
+                        self.notebook.add(self.tab2, text="Image 2")
+                        self.notebook.add(self.tab3, text="Image 3")
+                        self.notebook.add(self.tab4, text="Image 4")
+
+                        image = Image.open(lb.labelText)
+                        image = image.resize((1000, 429), Image.ANTIALIAS)
+                        self.userImages[lb.id] = ImageTk.PhotoImage(image)
+                        self.userLabels[lb.id] = tk.Label(self.tab1, image=self.userImages[lb.id])
+                        self.userLabels[lb.id].pack()
+                    else:
+                        #lb.notebook == 'add' or something else
+                        image = Image.open(lb.labelText)
+                        image = image.resize((1000, 429), Image.ANTIALIAS)
+                        self.userImages[lb.id] = ImageTk.PhotoImage(image)
+                        if lb.notebook == '2':
+                            self.userLabels[lb.id] = tk.Label(self.tab2, image=self.userImages[lb.id])
+                            self.userLabels[lb.id].pack()
+                        elif lb.notebook == '3':
+                            self.userLabels[lb.id] = tk.Label(self.tab3, image=self.userImages[lb.id])
+                            self.userLabels[lb.id].pack()
+                        elif lb.notebook == '4':
+                            self.userLabels[lb.id] = tk.Label(self.tab4, image=self.userImages[lb.id])
+                            self.userLabels[lb.id].pack()
+                else:
+                    #normal image, no notebook
+                    image = Image.open(lb.labelText)
+                    image = image.resize((800, 343), Image.ANTIALIAS)
+                    self.userImages[lb.id] = ImageTk.PhotoImage(image)
+                    self.userLabels[lb.id] = tk.Label(image=self.userImages[lb.id])
         else:
             #update label
             if lb.labType=='text' or lb.labType=='textInd':
@@ -350,11 +393,17 @@ class App(tk.Frame):
                 self.userLabels[lb.id].configure(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
             else:
                 #assume image label
+                xSize = 800
+                ySize = 343
+                if hasattr(lb, 'notebook'):
+                    xSize = 1000
+                    ySize = 429
                 image = Image.open(lb.labelText)
-                image = image.resize((800, 343), Image.ANTIALIAS)
+                image = image.resize((xSize, ySize), Image.ANTIALIAS)
                 self.userImages[lb.id] = ImageTk.PhotoImage(image)
                 self.userLabels[lb.id].configure(image=self.userImages[lb.id])
-        self.userLabels[lb.id].place(x=lb.x,y=lb.y)
+        if not hasattr(lb, 'notebook'):
+            self.userLabels[lb.id].place(x=lb.x,y=lb.y)
         
 
         if lb.labType == 'textInd':
