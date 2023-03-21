@@ -187,3 +187,14 @@ def genPyLiteral(obj, lb='myVar'):
     print(f'{lb} = {objToLiteral(obj)}')
 
 
+def sizeInfo(obj, label='Object', color='normal'):
+    prefix = ''
+    if not color=='normal':
+        prefix = getattr(cl, color)
+
+    print(prefix + f'{label} is using... (bytes) {sys.getsizeof(obj)}')
+    #ENDC to fix printing back to normal
+    print(cl.ENDC, end='', flush=True)
+
+def getSize(obj):
+    return sys.getsizeof(obj)

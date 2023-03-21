@@ -350,6 +350,7 @@ class App(tk.Frame):
                 if hasattr(lb, 'notebook'):
                     #notebook of images
                     if lb.notebook == 'init':
+                        #init notebook
                         self.notebook = tk.ttk.Notebook(self.master)
                         self.notebook.place(x=lb.x,y=lb.y)
                         self.tab1 = ttk.Frame(self.notebook)
@@ -366,8 +367,8 @@ class App(tk.Frame):
                         self.userImages[lb.id] = ImageTk.PhotoImage(image)
                         self.userLabels[lb.id] = tk.Label(self.tab1, image=self.userImages[lb.id])
                         self.userLabels[lb.id].pack()
-                    else:
-                        #lb.notebook == 'add' or something else
+                    else: #lb.notebook == 'add' or something else
+                        #update notebook with new image
                         image = Image.open(lb.labelText)
                         image = image.resize((1000, 429), Image.ANTIALIAS)
                         self.userImages[lb.id] = ImageTk.PhotoImage(image)
@@ -404,7 +405,6 @@ class App(tk.Frame):
                 self.userLabels[lb.id].configure(image=self.userImages[lb.id])
         if not hasattr(lb, 'notebook'):
             self.userLabels[lb.id].place(x=lb.x,y=lb.y)
-        
 
         if lb.labType == 'textInd':
             id2 = lb.id + 0.1
@@ -414,4 +414,5 @@ class App(tk.Frame):
                 self.userLabels[lb.id].configure(borderwidth=2, relief="sunken")
                 self.userLabels[id2] = tk.Label(text=lb.indLabel, fg=lb.color, font=(lb.font, lb.size))
                 self.userLabels[id2].place(x=lb.x, y=int(lb.y-lb.size*2) )
+
         

@@ -7,6 +7,9 @@ general
 logger
     cannot accept None as input data for csv file, maybe other datatypes
     cannot accept 'bytes' datatype
+gui
+    cannot handle main thread using input(), or ut.pause()
+    queue consumer needs to be updated to first in first out
 
 to do:
 general:
