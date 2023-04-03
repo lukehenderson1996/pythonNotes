@@ -144,7 +144,18 @@ def humTimeListAndTS():
     dateObj = datetime.fromtimestamp(timestamp)
     humReadDate = dateObj.strftime("20%y-%m-%d")
     humReadTime = dateObj.strftime("%H:%M:%S.%f")[:-3]
-    return [humReadDate, humReadTime], timestamp 
+    return [humReadDate, humReadTime], timestamp
+
+def humTimeAndTS():
+    '''Returns current time and date strings in human readable format, \n
+        plus the corresponding timestamp in seconds
+    Return:
+        [tuple]: humReadDate [str], humReadTime [str], [float]: timestamp'''
+    timestamp = time.time()
+    dateObj = datetime.fromtimestamp(timestamp)
+    humReadDate = dateObj.strftime("20%y-%m-%d")
+    humReadTime = dateObj.strftime("%H:%M:%S.%f")[:-3]
+    return humReadDate, humReadTime, timestamp 
 
 def countFileLines(path):
     '''Fast way to count total lines in a file\n

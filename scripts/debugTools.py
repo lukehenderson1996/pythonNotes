@@ -1,7 +1,7 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-__version__ = '3.11'
+__version__ = '3.2'
 
 import sys
 
@@ -65,7 +65,11 @@ def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
             info(obj.url, 'url')
             info(obj.elapsed, 'elapsed')
             info(dict(obj.headers), 'headers')
-            info(obj.json(), 'json')
+            if hasattr(obj, 'json') and callable(obj.json):
+                info(obj.json(), 'json')
+            else:
+                print('Api response has no .json() method')
+                dirInfo(obj, 'response', 'ext')
             return
         # #requests json
         # if isinstance(obj, requests.models.Response.json):
