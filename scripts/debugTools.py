@@ -181,11 +181,11 @@ def objToLiteral(obj):
 def genPyLiteral(obj, lb='myVar'):
     '''
     Args:
-        obj [any]:
+        obj [any]: \n
         lb [str, optional]:
     Usage: 
-        print(ut.humTimeList())
-        cl.blue('printing literal obj: ')
+        print(ut.humTimeList())\n
+        cl.blue('printing literal obj: ')\n
         dt.genPyLiteral(obj, 'literalsName')
         '''
     print(f'{lb} = {objToLiteral(obj)}')
