@@ -48,7 +48,7 @@ class LABEL:
     x : int
     y : int
 
-    def __init__(self, color='Black', size=12, font="Helvetica", labType='text'):
+    def __init__(self, color='Black', size=12, font="Arial", labType='text'):
         """generate unique LABEL object. Not thread safe\n
         Args:
             id [int]: unique ID for new custom label. Recommend making this
@@ -200,10 +200,10 @@ class App(tk.Frame):
         
         #init default labels
         self.rollPrHt = 11 #11
-        self.label2 = tk.Label(text="", fg="Black", font=("Consolas", self.rollPrHt), justify='left')
-        self.label2.place(x=0,y=0)
-        self.label = tk.Label(text="", fg="Red", font=("Helvetica", 18))
-        self.label.place(x=500,y=5)
+        self.rollPrLbl = tk.Label(text="", fg="Black", font=("Courier New", self.rollPrHt), justify='left')
+        self.rollPrLbl.place(x=0,y=0)
+        self.clockLbl = tk.Label(text="", fg="Red", font=("Arial", 15))
+        self.clockLbl.place(x=485,y=5)
 
         # create button, link it to clickExitButton()
         self.exitButton = tk.Button(text="Quit", command=self.clickExitButton)
@@ -344,7 +344,7 @@ class App(tk.Frame):
     """-------------------assorted functions------------------"""
     def update_clock(self):
         now = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-        self.label.configure(text=now)
+        self.clockLbl.configure(text=now)
 
     def aPrint(self, pText):
         """rolling printer "app Print" similar to cmd/shell print()
@@ -379,7 +379,7 @@ class App(tk.Frame):
         pStr = ''
         for el in self.rollPList:
             pStr += el + '\n'
-        self.label2.configure(text=pStr)
+        self.rollPrLbl.configure(text=pStr)
 
     def printBoth(self, pText):
             """Prints to cmd/shell and app rolling printer"""
