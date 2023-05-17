@@ -199,14 +199,21 @@ class App(tk.Frame):
         self.windowMax = windowMax
         
         #init default labels
-        self.rollPrHt = 11 #11
+        if platform.system() == 'Windows':
+            self.rollPrHt = 11 #11
+        else:
+            self.rollPrHt = 12
         self.rollPrLbl = tk.Label(text="", fg="Black", font=("Courier New", self.rollPrHt), justify='left')
         self.rollPrLbl.place(x=0,y=0)
+        if platform.system() == 'Windows':
+            self.clockHt = 15 #15
+        else:
+            self.clockHt = 16
         self.clockLbl = tk.Label(text="", fg="Red", font=("Arial", 15))
         self.clockLbl.place(x=705,y=5)
-
+        
         # create button, link it to clickExitButton()
-        self.exitButton = tk.Button(text="Quit", command=self.clickExitButton, width=1)
+        self.exitButton = tk.Button(text="Quit", command=self.clickExitButton, width=4)
         self.exitButton.place(x=880, y=5)
 
         #init internal variables
