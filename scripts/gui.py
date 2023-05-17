@@ -125,7 +125,7 @@ class GUI:
                         list[1] [any]: passed as argument to called function
                         example: guiQ.put(['aPrint', 'Hello, world!'])
             windowTitle [str, optional]: The title of the gui window\n
-            updateDelay [float, seconds, optional]: timing to update with \n
+            updateDelay [float, seconds, optional]: timing to update with (minimum is 0.001) \n
             quiet [bool, optional]: controls whether gui/app classes will print to CMD\n
             windowMax [bool, optional]: whether to have the window max size
         Notes:
@@ -203,11 +203,11 @@ class App(tk.Frame):
         self.rollPrLbl = tk.Label(text="", fg="Black", font=("Courier New", self.rollPrHt), justify='left')
         self.rollPrLbl.place(x=0,y=0)
         self.clockLbl = tk.Label(text="", fg="Red", font=("Arial", 15))
-        self.clockLbl.place(x=485,y=5)
+        self.clockLbl.place(x=705,y=5)
 
         # create button, link it to clickExitButton()
-        self.exitButton = tk.Button(text="Quit", command=self.clickExitButton)
-        self.exitButton.place(x=670, y=5)
+        self.exitButton = tk.Button(text="Quit", command=self.clickExitButton, width=1)
+        self.exitButton.place(x=880, y=5)
 
         #init internal variables
         self.startGUI = False
