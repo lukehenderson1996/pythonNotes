@@ -338,7 +338,7 @@ class App(tk.Frame):
             self.wX = None
             self.wY = None
             self.windowSizeReliable = False
-        print(f'Current geom: {self.master.winfo_geometry()}')
+        # print(f'Current geom: {self.master.winfo_geometry()}')
         # print(f'Fixed:        {self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
         if not self.windowMax:
             self.master.state('normal')
