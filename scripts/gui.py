@@ -24,7 +24,7 @@ Q_MAXED_WARN_DELAY = 5 #(seconds)
 #fix scaling in windows
 if platform.system() == "Windows":
     from ctypes import windll
-    windll.shcore.SetProcessDpiAwareness(1)
+    windll.shcore.SetProcessDpiAwareness(1) #1
 
 class LABEL:
     """Helper class for creation of custom labels"""
@@ -341,6 +341,7 @@ class App(tk.Frame):
         pText = text to print, can include newlines"""
         if self.windowSizeReliable:
             BUFFER_SIZE = int((self.wHt-44)/self.rollPrHt*1.30/2 - 1) #43
+            BUFFER_SIZE = 43 #for now to equalize setups
         else:
             BUFFER_SIZE = 43 #in some cases in linux it was 52
         if not isinstance(pText, str):
