@@ -157,8 +157,16 @@ class GUI:
 
         #start mainloop
         self.app.startGUI = True
-        self.root.protocol("WM_DELETE_WINDOW", self.app.close) #__del__
+        #intercept attempts to close
+        self.root.protocol("WM_DELETE_WINDOW", self.app.killGUI) #__del__
+        #start gui loop (blocking function)
         self.root.mainloop()
+        #clean up when finished (avoid error "Tcl_AsyncDelete: async handler deleted by the wrong thread")
+        del self.app
+        del self.root
+        # import gc
+        # gc.collect()
+
 
 class App(tk.Frame):
     def __init__(self, quiQ, updateDelay, quiet, master=None, windowMax=False):
@@ -192,7 +200,7 @@ class App(tk.Frame):
             self.updateDelay = DEFAULT_UPDATE_DELAY
         self.rollPList = []
         self.kill = False
-        self.killClearance = False
+        self.killClearance = False #not currently in use
         self.userLabels = {}
         self.firstRun = True
         #image stuff
@@ -208,9 +216,6 @@ class App(tk.Frame):
         if not self.quiet:
             cl.blue('Successful start ' + cl.CMDCYAN + 'GUI thread')
         self.outerLoop()
-
-    def close(self): #__del__
-        self.master.destroy()
 
     """---------------------------------------GUI main "outer" loop---------------------------------------"""
     def outerLoop(self):
@@ -306,16 +311,16 @@ class App(tk.Frame):
             if self.windowSizeReliable:
                 self.master.wm_geometry(f'{self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
 
-    def killGUI(self):
+    def clickExitButton(self):
+        self.kill = True
+        
+    def killGUI(self): #__del__
         # while not self.killClearance:
         #     pass
         if not self.quiet:
             cl.blue('Exiting ' + cl.CMDCYAN + 'GUI thread')
-        self.quit()
-        # exit()
-
-    def clickExitButton(self):
-        self.kill = True
+        # self.quit()
+        self.master.destroy()
 
     """-------------------assorted functions------------------"""
     def update_clock(self):
