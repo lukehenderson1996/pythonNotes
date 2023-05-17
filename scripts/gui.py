@@ -20,6 +20,7 @@ import debugTools as dt
 DEFAULT_UPDATE_DELAY = 100/1000 #(seconds)
 MAX_Q_SIZE = 50
 Q_MAXED_WARN_DELAY = 5 #(seconds)
+PLAT_FONT_ADJ = 1.2 #1.2 #1.0786 #linux fonts will be taller but not as wide
 COMMON_FONTS = ['Trebuchet MS', #fonts present in both Windows and Ubuntu 22 (after microsoft fonts installed)
         'Webdings',
         'Arial Black',
@@ -70,6 +71,11 @@ class LABEL:
         #optional args
         self.color = color
         self.size = size
+        # self.prevSize = size
+        if platform.system() == "Linux":
+            self.dispSize = int(self.size*PLAT_FONT_ADJ) #try to equalize sizing
+        else:
+            self.dispSize = self.size
         self.font = font
         self.labType = labType
         #internal instance vars to be set in a second step
@@ -88,6 +94,10 @@ class LABEL:
             y [int, optional]: default 30
         Optional kwargs:
             indLabel [str, int, float]: label of text indicator'''
+        if platform.system() == "Linux":
+            self.dispSize = int(self.size*PLAT_FONT_ADJ) #try to equalize sizing
+        else:
+            self.dispSize = self.size
         #regular text label
         if not labelText is None:
             self.labelText = str(labelText)
@@ -199,17 +209,15 @@ class App(tk.Frame):
         self.windowMax = windowMax
         
         #init default labels
-        if platform.system() == 'Windows':
-            self.rollPrHt = 11 #11
-        else:
-            self.rollPrHt = 12
+        self.rollPrHt = 11 #11
+        if platform.system() == "Linux":
+            self.rollPrHt = int(self.rollPrHt*PLAT_FONT_ADJ) #try to equalize sizing
         self.rollPrLbl = tk.Label(text="", fg="Black", font=("Courier New", self.rollPrHt), justify='left')
         self.rollPrLbl.place(x=0,y=0)
-        if platform.system() == 'Windows':
-            self.clockHt = 15 #15
-        else:
-            self.clockHt = 16
-        self.clockLbl = tk.Label(text="", fg="Red", font=("Arial", 15))
+        self.clockHt = 15 #15
+        if platform.system() == "Linux":
+            self.clockHt = int(self.clockHt*PLAT_FONT_ADJ) #try to equalize sizing
+        self.clockLbl = tk.Label(text="", fg="Red", font=("Arial", self.clockHt))
         self.clockLbl.place(x=705,y=5)
         
         # create button, link it to clickExitButton()
@@ -318,10 +326,10 @@ class App(tk.Frame):
         self.wX = int(self.master.winfo_rootx()-8) #0-8
         self.wY = int(self.master.winfo_rooty()-23) #29-23
         self.windowSizeReliable = True
-        dt.info(self.master.winfo_width(), 'self.master.winfo_width()')
-        dt.info(self.master.winfo_height(), 'self.master.winfo_height()')
-        dt.info(self.master.winfo_rootx(), 'self.master.winfo_rootx()')
-        dt.info(self.master.winfo_rooty(), 'self.master.winfo_rooty()')
+        # dt.info(self.master.winfo_width(), 'self.master.winfo_width()')
+        # dt.info(self.master.winfo_height(), 'self.master.winfo_height()')
+        # dt.info(self.master.winfo_rootx(), 'self.master.winfo_rootx()')
+        # dt.info(self.master.winfo_rooty(), 'self.master.winfo_rooty()')
         if platform.system() == "Linux":
             #in Linux, we get incorrect values on boot, and then correct values when re rerun the program
             #therefore we just consider the values to be unreliable and rewrite with 'None'
@@ -410,7 +418,7 @@ class App(tk.Frame):
             #init label
             if lb.labType=='text' or lb.labType=='textInd':
                 #text label (or textInd)
-                self.userLabels[lb.id] = tk.Label(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
+                self.userLabels[lb.id] = tk.Label(text=lb.labelText, fg=lb.color, font=(lb.font, lb.dispSize))
             else:
                 #assume image label
                 if hasattr(lb, 'notebook'):
@@ -457,7 +465,7 @@ class App(tk.Frame):
             #update label
             if lb.labType=='text' or lb.labType=='textInd':
                 #text label (or textInd)
-                self.userLabels[lb.id].configure(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
+                self.userLabels[lb.id].configure(text=lb.labelText, fg=lb.color, font=(lb.font, lb.dispSize))
             else:
                 #assume image label
                 xSize = 800
@@ -478,7 +486,7 @@ class App(tk.Frame):
                 pass #self.userLabels[id2].configure(text=lb.labelText, fg=lb.color, font=(lb.font, lb.size))
             else:
                 self.userLabels[lb.id].configure(borderwidth=2, relief="sunken")
-                self.userLabels[id2] = tk.Label(text=lb.indLabel, fg=lb.color, font=(lb.font, lb.size))
-                self.userLabels[id2].place(x=lb.x, y=int(lb.y-lb.size*2) )
+                self.userLabels[id2] = tk.Label(text=lb.indLabel, fg=lb.color, font=(lb.font, lb.dispSize))
+                self.userLabels[id2].place(x=lb.x, y=int(lb.y-lb.dispSize*2) )
 
         
