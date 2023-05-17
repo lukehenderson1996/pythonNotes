@@ -21,6 +21,11 @@ DEFAULT_UPDATE_DELAY = 100/1000 #(seconds)
 MAX_Q_SIZE = 50
 Q_MAXED_WARN_DELAY = 5 #(seconds)
 
+#fix scaling in windows
+if platform.system() == "Windows":
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
+
 class LABEL:
     """Helper class for creation of custom labels"""
     idNum = 0
@@ -146,13 +151,13 @@ class GUI:
         else:
             self.root.attributes('-zoomed', True) #only for linux, either line throws errors in wrong platform
 
-        #icon
-        if platform.system() == "Linux":
-            iconImg = tk.PhotoImage(file='/home/luke/Documents/projects/niceHash/pics/my icon.gif')
-        else:
-            baseDir = os.path.dirname(os.getcwd())
-            iconImg = tk.PhotoImage(file=baseDir+'\\pics\\my icon.gif')
-        self.root.tk.call('wm', 'iconphoto', self.root._w, iconImg)
+        # #icon
+        # if platform.system() == "Linux":
+        #     iconImg = tk.PhotoImage(file='/home/luke/Documents/projects/niceHash/pics/my icon.gif')
+        # else:
+        #     baseDir = os.path.dirname(os.getcwd())
+        #     iconImg = tk.PhotoImage(file=baseDir+'\\pics\\my icon.gif')
+        # self.root.tk.call('wm', 'iconphoto', self.root._w, iconImg)
 
 
         #start mainloop
@@ -290,12 +295,16 @@ class App(tk.Frame):
     """-----------------------utilities-----------------------"""
     def outerLoopInit(self):
         #dynamic window geometry adjustment for left half of screen
-        maxWd = int(self.master.winfo_width())
+        maxWd = int(self.master.winfo_width()) #1920
         self.wWd = int(maxWd/2)
-        self.wHt = int(self.master.winfo_height()-9)
-        self.wX = int(self.master.winfo_rootx()-8)
-        self.wY = int(self.master.winfo_rooty()-23)
+        self.wHt = int(self.master.winfo_height()-9) #1001-9
+        self.wX = int(self.master.winfo_rootx()-8) #0-8
+        self.wY = int(self.master.winfo_rooty()-23) #29-23
         self.windowSizeReliable = True
+        dt.info(self.master.winfo_width(), 'self.master.winfo_width()')
+        dt.info(self.master.winfo_height(), 'self.master.winfo_height()')
+        dt.info(self.master.winfo_rootx(), 'self.master.winfo_rootx()')
+        dt.info(self.master.winfo_rooty(), 'self.master.winfo_rooty()')
         if platform.system() == "Linux":
             #in Linux, we get incorrect values on boot, and then correct values when re rerun the program
             #therefore we just consider the values to be unreliable and rewrite with 'None'
@@ -304,7 +313,7 @@ class App(tk.Frame):
             self.wX = None
             self.wY = None
             self.windowSizeReliable = False
-        # print(f'Current geom: {self.master.winfo_geometry()}')
+        print(f'Current geom: {self.master.winfo_geometry()}')
         # print(f'Fixed:        {self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
         if not self.windowMax:
             self.master.state('normal')

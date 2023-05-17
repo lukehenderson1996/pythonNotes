@@ -16,7 +16,7 @@ cl.green('Program Start')
 progStart = time.time()
 
 guiQ = queue.Queue()
-dw = gui.GUI(guiQ, updateDelay=0.05, quiet=True) 
+dw = gui.GUI(guiQ, updateDelay=0.001, quiet=True, windowMax=True) 
 dw.start()
 
 # #BRING FOCUS BACK TO CMD WINDOW (from chatGPT)
@@ -78,30 +78,43 @@ dw.start()
 # ut.pause()
 
 
-#test output templates:
-# l1 = Label(root, text="This", borderwidth=2, relief="groove")
-myLabel = gui.LABEL(labType='textInd', size=12)
-myLabel.set(0, x=300, y=300, indLabel="Indicator's Name")
-guiQ.put(myLabel)
-for i in range(1, 3):
-    time.sleep(1)
-    guiQ.put(myLabel.set(i))
-ut.pause()
-
-
-# #grid output
-# for yPos in range(50, 1000, 200):
-#     xGrid = []
-#     for xLoc in range(0, 1000, 100):
-#         xGrid.append(gui.LABEL(size=12))
-#         xGrid[-1].set(xLoc, x=xLoc, y=yPos)
-#         guiQ.put(xGrid[-1])
-#     time.sleep(0.1)
-# for xPos in range(50, 1000, 200):
-#     yGrid = []
-#     for yLoc in range(0, 1000, 100):
-#         yGrid.append(gui.LABEL(size=12))
-#         yGrid[-1].set(yLoc, x=xPos, y=yLoc)
-#         guiQ.put(yGrid[-1])
-#     time.sleep(0.1)
+# #test output templates:
+# # l1 = Label(root, text="This", borderwidth=2, relief="groove")
+# myLabel = gui.LABEL(labType='textInd', size=12)
+# myLabel.set(0, x=300, y=300, indLabel="Indicator's Name")
+# guiQ.put(myLabel)
+# for i in range(1, 3):
+#     time.sleep(1)
+#     guiQ.put(myLabel.set(i))
 # ut.pause()
+
+
+#grid output
+xRange = 2500 #oversize
+yRange = 1500 #oversize
+labelRes = 40 #labels will overlap if too small
+fontSize = 8
+for yPos in range(50, yRange, 200):
+    xGrid = []
+    for xLoc in range(0, xRange, labelRes):
+        xGrid.append(gui.LABEL(size=fontSize))
+        xGrid[-1].set(xLoc, x=xLoc, y=yPos)
+        guiQ.put(xGrid[-1])
+    time.sleep(0.1)
+for xPos in range(50, xRange, 200):
+    yGrid = []
+    for yLoc in range(0, yRange, labelRes):
+        yGrid.append(gui.LABEL(size=fontSize))
+        yGrid[-1].set(yLoc, x=xPos, y=yLoc)
+        guiQ.put(yGrid[-1])
+    time.sleep(0.1)
+myLabel = gui.LABEL(color='Blue', size=12, font="Helvetica")
+myLabel.set("Size 12 @ 300x300", x=300, y=300)
+guiQ.put(myLabel)
+myLabel2 = gui.LABEL(color='Blue', size=18, font="Helvetica")
+myLabel2.set("Size 18 @ 400x400", x=400, y=400)
+guiQ.put(myLabel2)
+myLabel3 = gui.LABEL(color='Blue', size=26, font="Helvetica")
+myLabel3.set("Size 26 @ 600x600", x=600, y=600)
+guiQ.put(myLabel3)
+ut.pause()
