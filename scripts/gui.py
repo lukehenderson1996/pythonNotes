@@ -147,7 +147,11 @@ class GUI:
             self.root.attributes('-zoomed', True) #only for linux, either line throws errors in wrong platform
 
         #icon
-        iconImg = tk.PhotoImage(file='/home/luke/Documents/projects/niceHash/pics/my icon.gif')
+        if platform.system() == "Linux":
+            iconImg = tk.PhotoImage(file='/home/luke/Documents/projects/niceHash/pics/my icon.gif')
+        else:
+            baseDir = os.path.dirname(os.getcwd())
+            baseDir += f'\\pics\\my icon.gif'
         self.root.tk.call('wm', 'iconphoto', self.root._w, iconImg)
         # self.root.iconbitmap('@/home/luke/Documents/projects/niceHash/icons/my 64 icon6.xbm')
         # self.root.iconphoto(True, '/home/luke/Documents/projects/niceHash/icons/my 64 icon4.png')
