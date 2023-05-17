@@ -20,6 +20,16 @@ import debugTools as dt
 DEFAULT_UPDATE_DELAY = 100/1000 #(seconds)
 MAX_Q_SIZE = 50
 Q_MAXED_WARN_DELAY = 5 #(seconds)
+COMMON_FONTS = ['Trebuchet MS', #fonts present in both Windows and Ubuntu 22 (after microsoft fonts installed)
+        'Webdings',
+        'Arial Black',
+        'Verdana',
+        'Times New Roman',
+        'Comic Sans MS',
+        'Georgia',
+        'Arial',
+        'Courier New',
+        'Impact']
 
 #fix scaling in windows
 if platform.system() == "Windows":

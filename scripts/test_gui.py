@@ -12,6 +12,17 @@ import debugTools as dt
 import gui
 import utils as ut
 
+COMMON_FONTS = ['Trebuchet MS', #fonts present in both Windows and Ubuntu 22 (after microsoft fonts installed)
+        'Webdings',
+        'Arial Black',
+        'Verdana',
+        'Times New Roman',
+        'Comic Sans MS',
+        'Georgia',
+        'Arial',
+        'Courier New',
+        'Impact']
+
 cl.green('Program Start')
 progStart = time.time()
 
@@ -33,17 +44,20 @@ dw.start()
 import tkinter.font as tkf
 fontTuple = tkf.families()
 dt.info(fontTuple, 'fontTuple')
-dt.genPyLiteral(fontTuple, 'fontTuple')
 #display fonts:
+fontsToIterate = COMMON_FONTS #fontTuple or COMMON_FONTS
+#big displays
 labelList = []
-for i, font in enumerate(fontTuple):
-    labelList.append(gui.LABEL(color='Black', size=18, font=font))
-    labelList[-1].set("fgijlpqtuvxy 00:1234  " + font, x=20, y=100+20+30*i)
+for i, font in enumerate(fontsToIterate):
+    labelList.append(gui.LABEL(color='Black', size=24, font=font))
+    labelList[-1].set("fgijlpqtuvxy 00:1234  " + font, x=20, y=120+70*i)
     guiQ.put(labelList[-1])
-
-customFontLabel = gui.LABEL(color='Black', size=18, font='Nimbus Roman')
-customFontLabel.set("fgijlpqtuvxy 00:1234  " + 'Nimbus Roman', x=20, y=100+20+30*i)
-guiQ.put(customFontLabel)
+#small displays
+labelList = []
+for i, font in enumerate(fontsToIterate):
+    labelList.append(gui.LABEL(color='Black', size=11, font=font))
+    labelList[-1].set("fgijlpqtuvxy 00:1234  " + font, x=1200, y=120+70*i)
+    guiQ.put(labelList[-1])
 
 ut.pause()
 
