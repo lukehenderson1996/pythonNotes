@@ -89,25 +89,26 @@ dw.start()
 # ut.pause()
 
 
-# #grid output
-# xRange = 2500 #oversize
-# yRange = 1500 #oversize
-# labelRes = 40 #labels will overlap if too small
-# fontSize = 8
-# for yPos in range(50, yRange, 200):
-#     xGrid = []
-#     for xLoc in range(0, xRange, labelRes):
-#         xGrid.append(gui.LABEL(size=fontSize))
-#         xGrid[-1].set(xLoc, x=xLoc, y=yPos)
-#         guiQ.put(xGrid[-1])
-#     time.sleep(0.1)
-# for xPos in range(50, xRange, 200):
-#     yGrid = []
-#     for yLoc in range(0, yRange, labelRes):
-#         yGrid.append(gui.LABEL(size=fontSize))
-#         yGrid[-1].set(yLoc, x=xPos, y=yLoc)
-#         guiQ.put(yGrid[-1])
-#     time.sleep(0.1)
+#grid output
+xRange = 2500 #oversize
+yRange = 1500 #oversize
+labelRes = 40 #labels will overlap if too small
+fontSize = 8
+for yPos in range(50, yRange, 200):
+    xGrid = []
+    for xLoc in range(0, xRange, labelRes):
+        xGrid.append(gui.LABEL(size=fontSize, color='green'))
+        xGrid[-1].set(xLoc, x=xLoc, y=yPos)
+        guiQ.put(xGrid[-1])
+    time.sleep(0.1)
+for xPos in range(50, xRange, 200):
+    yGrid = []
+    for yLoc in range(0, yRange, labelRes):
+        yGrid.append(gui.LABEL(size=fontSize, color='purple'))
+        yGrid[-1].set(yLoc, x=xPos, y=yLoc)
+        guiQ.put(yGrid[-1])
+    time.sleep(0.1)
+
 #various labels
 myLabel = gui.LABEL(color='Blue', size=12, font="Helvetica")
 myLabel.set("Size 12 @ 300x300", x=300, y=300)
@@ -118,8 +119,13 @@ guiQ.put(myLabel2)
 myLabel3 = gui.LABEL(color='Blue', size=26, font="Helvetica")
 myLabel3.set("Size 26 @ 600x600", x=600, y=600)
 guiQ.put(myLabel3)
+
 #fill up rolling printer
-for i in range(90):
+for i in range(44):
     prStr = str((str(i)+' ')*200)[:90]
+    if i%2:
+        prStr = '012345678 10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---'
     guiQ.put(prStr)
+
+time.sleep(2)
 ut.pause()
