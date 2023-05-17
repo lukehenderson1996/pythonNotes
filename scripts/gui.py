@@ -1,9 +1,10 @@
 """Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
 
 # Author: Luke Henderson
-__version__ = '2.6'
+__version__ = '2.7'
 
 import os
+import platform
 import time
 from datetime import datetime
 # import contextlib
@@ -140,7 +141,16 @@ class GUI:
         self.root.wm_title(self.windowTitle)
         if self.windowGeom != None:
             self.root.geometry(self.windowGeom) #to prevent eye sore of extra window movement
-        self.root.state('zoomed')
+        if platform.system() == "Windows":
+            self.root.state('zoomed') #only for windows, either line throws errors in wrong platform
+        else:
+            self.root.attributes('-zoomed', True) #only for linux, either line throws errors in wrong platform
+
+        #icon
+        iconImg = tk.PhotoImage(file='/home/luke/Documents/projects/niceHash/pics/my icon.gif')
+        self.root.tk.call('wm', 'iconphoto', self.root._w, iconImg)
+        # self.root.iconbitmap('@/home/luke/Documents/projects/niceHash/icons/my 64 icon6.xbm')
+        # self.root.iconphoto(True, '/home/luke/Documents/projects/niceHash/icons/my 64 icon4.png')
 
         #start mainloop
         self.app.startGUI = True
@@ -277,11 +287,21 @@ class App(tk.Frame):
         self.wHt = int(self.master.winfo_height()-9)
         self.wX = int(self.master.winfo_rootx()-8)
         self.wY = int(self.master.winfo_rooty()-23)
+        self.windowSizeReliable = True
+        if platform.system() == "Linux":
+            #in Linux, we get incorrect values on boot, and then correct values when re rerun the program
+            #therefore we just consider the values to be unreliable and rewrite with 'None'
+            self.wWd = None
+            self.wHt = None
+            self.wX = None
+            self.wY = None
+            self.windowSizeReliable = False
         # print(f'Current geom: {self.master.winfo_geometry()}')
         # print(f'Fixed:        {self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
         if not self.windowMax:
             self.master.state('normal')
-            self.master.wm_geometry(f'{self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
+            if self.windowSizeReliable:
+                self.master.wm_geometry(f'{self.wWd}x{self.wHt}+{self.wX}+{self.wY}')
 
     def killGUI(self):
         # while not self.killClearance:
@@ -302,7 +322,10 @@ class App(tk.Frame):
     def aPrint(self, pText):
         """rolling printer "app Print" similar to cmd/shell print()
         pText = text to print, can include newlines"""
-        BUFFER_SIZE = int((self.wHt-44)/self.rollPrHt*1.30/2 - 1) #43
+        if self.windowSizeReliable:
+            BUFFER_SIZE = int((self.wHt-44)/self.rollPrHt*1.30/2 - 1) #43
+        else:
+            BUFFER_SIZE = 43 #in some cases in linux it was 52
         if not isinstance(pText, str):
             cl.red('GUI Error: aPrint() List contains something other than a string')
             return
@@ -315,7 +338,15 @@ class App(tk.Frame):
                 el = el[93:]
             self.rollPList.append(el)
         #remove old prints to make rolling command line style printer
+        origRollPList = self.rollPList
         while len(self.rollPList) > BUFFER_SIZE:
+            if len(self.rollPList) == 0:
+                cl.red('Error (gui.py): self.rollPList is empty')
+                dt.info(origRollPList, 'origRollPList')
+                dt.info(self.rollPList, 'self.rollPList')
+                dt.info(pText, 'pText')
+                dt.info(BUFFER_SIZE, 'BUFFER_SIZE')
+                cl.yellow('Continuing...')
             self.rollPList.pop(0)
         pStr = ''
         for el in self.rollPList:
