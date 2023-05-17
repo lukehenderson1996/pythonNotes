@@ -153,8 +153,7 @@ class GUI:
             baseDir = os.path.dirname(os.getcwd())
             iconImg = tk.PhotoImage(file=baseDir+'\\pics\\my icon.gif')
         self.root.tk.call('wm', 'iconphoto', self.root._w, iconImg)
-        # self.root.iconbitmap('@/home/luke/Documents/projects/niceHash/icons/my 64 icon6.xbm')
-        # self.root.iconphoto(True, '/home/luke/Documents/projects/niceHash/icons/my 64 icon4.png')
+
 
         #start mainloop
         self.app.startGUI = True
