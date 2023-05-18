@@ -172,7 +172,6 @@ def objToLiteral(obj):
     elif isinstance(obj, dict):
         items = ", ".join(f"{objToLiteral(key)}: {objToLiteral(value)}" for key, value in obj.items())
         if False: #len(items) > 100:
-            cl.blue('IM IN HERE ')
             items = ", \n\t".join(f"{objToLiteral(key)}: {objToLiteral(value)}" for key, value in obj.items())
         return f"{{{items}}}"
     else:
