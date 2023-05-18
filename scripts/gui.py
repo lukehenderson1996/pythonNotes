@@ -1,7 +1,7 @@
 """Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
 
 # Author: Luke Henderson
-__version__ = '2.7'
+__version__ = '2.8'
 
 import os
 import platform
@@ -20,7 +20,7 @@ import debugTools as dt
 DEFAULT_UPDATE_DELAY = 100/1000 #(seconds)
 MAX_Q_SIZE = 50
 Q_MAXED_WARN_DELAY = 5 #(seconds)
-PLAT_FONT_ADJ = 1.2 #1.2 #1.0786 #linux fonts will be taller but not as wide
+PLAT_FONT_ADJ = 1.19 #adjust linux fonts. After adjustment linux fonts will be taller but not as wide. Nominally 1.19
 COMMON_FONTS = ['Trebuchet MS', #fonts present in both Windows and Ubuntu 22 (after microsoft fonts installed)
         'Webdings',
         'Arial Black',
@@ -138,6 +138,10 @@ class GUI:
             updateDelay [float, seconds, optional]: timing to update with (minimum is 0.001) \n
             quiet [bool, optional]: controls whether gui/app classes will print to CMD\n
             windowMax [bool, optional]: whether to have the window max size
+        Extra customization (optional):
+            self.icon [str]: filepath to icon. uses .gif format.
+                Works for taskbar in linux only. For Windows, it only \n
+                changes the top-left icon on the title bar. 
         Notes:
             Can set these variables after init:
                 windowGeom [str, currently not in use]: size/location of gui window. format:
@@ -151,6 +155,8 @@ class GUI:
         #extra customization, needs work
         self.windowGeom = windowGeom #'768x792+-8+0' #'766x792+-7+0' #currently not in use
         self.windowMax = windowMax
+        #icon
+        self.icon = None
 
     def start(self):
         """Starts gui in separate thread, non blocking"""
@@ -171,14 +177,10 @@ class GUI:
         else:
             self.root.attributes('-zoomed', True) #only for linux, either line throws errors in wrong platform
 
-        # #icon
-        # if platform.system() == "Linux":
-        #     iconImg = tk.PhotoImage(file='/home/luke/Documents/projects/niceHash/pics/my icon.gif')
-        # else:
-        #     baseDir = os.path.dirname(os.getcwd())
-        #     iconImg = tk.PhotoImage(file=baseDir+'\\pics\\my icon.gif')
-        # self.root.tk.call('wm', 'iconphoto', self.root._w, iconImg)
-
+        #icon
+        if self.icon != None:
+            iconImg = tk.PhotoImage(file=self.icon)
+            self.root.tk.call('wm', 'iconphoto', self.root._w, iconImg)
 
         #start mainloop
         self.app.startGUI = True
@@ -364,11 +366,10 @@ class App(tk.Frame):
     def aPrint(self, pText):
         """rolling printer "app Print" similar to cmd/shell print()
         pText = text to print, can include newlines"""
-        if self.windowSizeReliable:
-            BUFFER_SIZE = int((self.wHt-44)/self.rollPrHt*1.30/2 - 1) #43
-            BUFFER_SIZE = 43 #for now to equalize setups
+        if platform.system() == "Windows":
+            BUFFER_SIZE = 45 #for now just to equalize platforms
         else:
-            BUFFER_SIZE = 43 #in some cases in linux it was 52
+            BUFFER_SIZE = 45 #for now just to equalize platforms
         if not isinstance(pText, str):
             cl.red('GUI Error: aPrint() List contains something other than a string')
             return
