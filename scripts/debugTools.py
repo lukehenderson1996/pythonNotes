@@ -103,7 +103,6 @@ def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
                 else:
                     info(el, type(el), treeLevel=treeLevel+1)
     
-
     #ENDC to fix printing back to normal
     print(cl.ENDC, end='', flush=True)
 
@@ -156,8 +155,20 @@ def pprintInfo(obj):
     else:
         cl.red('Error, pprint not installed')
 
+def genPyLiteral(obj, lb='myVar'):
+    '''Converts and prints any object to pythonic literal code\n
+    Args:
+        obj [any]: \n
+        lb [str, optional]:
+    Usage: 
+        print(ut.humTimeList())\n
+        cl.blue('printing literal obj: ')\n
+        dt.genPyLiteral(obj, 'literalsName')
+        '''
+    print(f'{lb} = {objToLiteral(obj)}')
+
 def objToLiteral(obj):
-    '''Converts any object to pythonic literal code\n
+    '''Returns string for object converted to literal
     Args:
         obj [any]'''
     if isinstance(obj, (int, float, bool)):
@@ -172,24 +183,10 @@ def objToLiteral(obj):
     elif isinstance(obj, dict):
         items = ", ".join(f"{objToLiteral(key)}: {objToLiteral(value)}" for key, value in obj.items())
         if False: #len(items) > 100:
-            cl.blue('IM IN HERE ')
             items = ", \n\t".join(f"{objToLiteral(key)}: {objToLiteral(value)}" for key, value in obj.items())
         return f"{{{items}}}"
     else:
         return repr(obj)
-    
-def genPyLiteral(obj, lb='myVar'):
-    '''
-    Args:
-        obj [any]: \n
-        lb [str, optional]:
-    Usage: 
-        print(ut.humTimeList())\n
-        cl.blue('printing literal obj: ')\n
-        dt.genPyLiteral(obj, 'literalsName')
-        '''
-    print(f'{lb} = {objToLiteral(obj)}')
-
 
 def sizeInfo(obj, label='Object', color='normal'):
     prefix = ''
