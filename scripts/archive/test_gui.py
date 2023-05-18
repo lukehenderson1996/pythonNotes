@@ -160,7 +160,7 @@ myLabel4.set("Size 90 @ 600x600", x=600, y=600)
 guiQ.put(myLabel4)
 
 #fill up rolling printer
-for i in range(44):
+for i in range(45+1):
     prStr = str((str(i)+' ')*200)[:90]
     if i%2:
         prStr = '012345678 10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---'
