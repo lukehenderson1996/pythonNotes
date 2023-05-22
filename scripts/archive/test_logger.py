@@ -43,6 +43,26 @@ progStart = time.time()
 # myNamedLog = lg.LOGGER(logCols=['Date','Time','Site'], filename='custom name', prefix=prefix, quiet=False)
 # debugLog = lg.LOGGER(None, prefix='debug\VERBOSE', quiet=False, xml=True)
 # #need further debug on subfolder usage
-# #for this example, it neglects to put VERBOSE in subfolder\\debug, just tries datalogs\\debug
+# #for this example, it neglects to put VERBOSE in subfolder/debug, just tries datalogs/debug
 # #also will not check for existence of subfolder and create
 # #also needs to check for existence of datalogs folder and create if necessary
+
+'''test filepath handling for platform'''
+
+# #rel path
+# sLog = lg.LOGGER(logCols=['Try Number', 'Profitability'], quiet=False)
+# sLog.simpLog([1, 1.05])
+
+#incorrect rel path
+sLog = lg.LOGGER(logCols=['Try Number', 'Profitability'], prefix='my\\folders/to/use', quiet=False)
+sLog.simpLog([1, 1.05])
+
+# #absolute path
+# sLog = lg.LOGGER(logCols=['Try Number', 'Profitability'], 
+#                  absPath='/home/luke/Documents/projects/pythonNotes/datalogs/missingFolder/sub3/hello.csv', quiet=False)
+# sLog.simpLog([1, 1.05])
+
+# #incorrect abs path
+# sLog = lg.LOGGER(logCols=['Try Number', 'Profitability'], 
+#                  absPath='/home/luke/Documents/projects/pythonNotes\\datalogs\\missingFolder\\sub3\\hello.csv', quiet=False)
+# sLog.simpLog([1, 1.05])

@@ -277,7 +277,9 @@ def pth(path, mode='abs'):
             'rel1': relative path mode (up one directory) \n
             'rel2': relative path mode (up 2 directories)
     Return:
-        [str] converted file path'''
+        [str] converted file path
+    Notes:
+        relative paths must start with separator: '/subfolder1/subfolder2' '''
     #input parameter validation
     if not isinstance(path, str):
         cl.red('Error (utils.py): path is not string')

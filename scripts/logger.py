@@ -1,9 +1,10 @@
 """Logger class with multiple output options and data handling tools"""
 
 # Author: Luke Henderson
-__version__ = '1.2'
+__version__ = '1.3'
 
 import os
+import platform
 import time
 from datetime import datetime
 
@@ -77,7 +78,8 @@ class LOGGER:
         Args:
             logCols [list of str]: populates the headers if not None\n
             filename [str, optional]: custom name of file to override default\n
-            prefix [str, optional]: prefix to file names, default ''\n
+            prefix [str, optional]: prefix to file names, default ''
+                format: 'prefix Text' or 'subfolder/' 
             quiet [bool, optional]: False for log location information\n
             csv [bool, default/optional]: whether to create csv log under this instance\n
             xml [bool, optional]: whether to create xml log under this instance\n
@@ -93,6 +95,36 @@ class LOGGER:
         self.csv = csv
         self.xml = xml
         self.filesClosed = False
+        plat = platform.system()
+
+        #validate input parameters
+        if not logCols == None:
+            assert isinstance(logCols, list)
+            for col in logCols:
+                assert isinstance(col, str)
+        assert isinstance(prefix, str)
+        assert isinstance(filename, str) or filename==None
+        assert isinstance(quiet, bool)
+        assert isinstance(csv, bool)
+        assert isinstance(xml, bool)
+        assert isinstance(absPath, str) or absPath==None
+        assert isinstance(persistent, bool)
+        #platform-dependent validation
+        if plat == 'Windows':
+            sep = '\\'
+            incorrectSep = '/'
+        else:
+            sep = '/'
+            incorrectSep = '\\'
+        if prefix and incorrectSep in prefix:
+            cl.red('Error (logger.py): Incorrect separator in prefix')
+            exit()
+        if filename and incorrectSep in filename:
+            cl.red('Error (logger.py): Incorrect separator in filename')
+            exit()
+        if absPath and incorrectSep in absPath:
+            cl.red('Error (logger.py): Incorrect separator in absPath')
+            exit()
 
         #manage and open file(s)
         if not (csv or xml):
@@ -114,19 +146,30 @@ class LOGGER:
         #generate file path list
         if absPath is None:
             #relative path
-            filePath = os.path.dirname(os.getcwd())
             filePathList = []
             filenameList = [filename, filename] #can change to accept list or str for filenames later
             if csv:
                 if filenameList[0] is None:
                     filenameList[0] = DEFAULT_FILENAME_CSV
-                filePathList.append(filePath + f'\\datalogs\\{prefix + filenameList[0] + fileSuffix}.csv')
+                thisFilePath = ut.pth(f'/datalogs/{prefix + filenameList[0] + fileSuffix}.csv', 'rel1')
+                if not os.path.exists(os.path.dirname(thisFilePath)):
+                    cl.yellow("Warning (logger.py): Directory doesn't exist. Creating subfolder(s)")
+                    os.makedirs(os.path.dirname(thisFilePath))
+                filePathList.append(thisFilePath)
             if xml:
                 if filenameList[1] is None:
                     filenameList[1] = DEFAULT_FILENAME_XML
-                filePathList.append(filePath + f'\\datalogs\\{prefix + filenameList[1] + fileSuffix}.xml')
+                thisFilePath = ut.pth(f'/datalogs/{prefix + filenameList[1] + fileSuffix}.xml', 'rel1')
+                if not os.path.exists(os.path.dirname(thisFilePath)):
+                    cl.yellow("Warning (logger.py): Directory doesn't exist. Creating subfolder(s)")
+                    os.makedirs(os.path.dirname(thisFilePath))
+                filePathList.append(thisFilePath)
         else:
             #absolute path
+            ut.pth(absPath)
+            if not os.path.exists(os.path.dirname(absPath)):
+                cl.yellow("Warning (logger.py): Directory doesn't exist. Creating subfolder(s)")
+                os.makedirs(os.path.dirname(absPath))
             filePathList = []
             filePathList.append(absPath)
         #generate file list, guaranteeing no modification of old files
@@ -288,12 +331,13 @@ class LOGGER:
 
     def close(self) -> None:
         '''closes files'''
-        for el in self.fileList:
-            if el.ext == 'xml':
-                el.write('</root>')
-                el.close()
-            else:
-                el.close()
+        if hasattr(self, 'fileList'):
+            for el in self.fileList:
+                if el.ext == 'xml':
+                    el.write('</root>')
+                    el.close()
+                else:
+                    el.close()
         self.filesClosed = True
 
 class ManagedLog:
