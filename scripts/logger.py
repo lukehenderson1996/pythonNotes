@@ -153,7 +153,7 @@ class LOGGER:
                     filenameList[0] = DEFAULT_FILENAME_CSV
                 thisFilePath = ut.pth(f'/datalogs/{prefix + filenameList[0] + fileSuffix}.csv', 'rel1')
                 if not os.path.exists(os.path.dirname(thisFilePath)):
-                    cl.yellow("Warning (logger.py): Directory doesn't exist. Creating subfolder(s)")
+                    cl.yellow(f"Warning (logger.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(thisFilePath)}")
                     os.makedirs(os.path.dirname(thisFilePath))
                 filePathList.append(thisFilePath)
             if xml:
@@ -161,14 +161,14 @@ class LOGGER:
                     filenameList[1] = DEFAULT_FILENAME_XML
                 thisFilePath = ut.pth(f'/datalogs/{prefix + filenameList[1] + fileSuffix}.xml', 'rel1')
                 if not os.path.exists(os.path.dirname(thisFilePath)):
-                    cl.yellow("Warning (logger.py): Directory doesn't exist. Creating subfolder(s)")
+                    cl.yellow(f"Warning (logger.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(thisFilePath)}")
                     os.makedirs(os.path.dirname(thisFilePath))
                 filePathList.append(thisFilePath)
         else:
             #absolute path
             ut.pth(absPath)
             if not os.path.exists(os.path.dirname(absPath)):
-                cl.yellow("Warning (logger.py): Directory doesn't exist. Creating subfolder(s)")
+                cl.yellow(f"Warning (logger.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(absPath)}")
                 os.makedirs(os.path.dirname(absPath))
             filePathList = []
             filePathList.append(absPath)

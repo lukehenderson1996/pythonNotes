@@ -325,3 +325,23 @@ def pth(path, mode='abs'):
         cl.red(f'Error (utils.py): fixedPath is None')
         exit()
     return fixedPath
+
+def gpth(path, mode='abs'):
+    '''Guarantees filepath will be available for saving \n
+    Args:
+        path [str]: filepath to be converted, include extension \n
+        mode [str, optional]: mode to run \n
+            'abs': absolute path mode \n
+            'rel0': relative path mode (normal) \n
+            'rel1': relative path mode (up one directory) \n
+            'rel2': relative path mode (up 2 directories)
+    Return:
+        [str] converted file path
+    Notes:
+        relative paths must start with separator: '/subfolder1/subfolder2' '''
+    fixedPath = pth(path, mode)
+    if not os.path.exists(os.path.dirname(fixedPath)):
+        cl.yellow(f"Warning (utils.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(fixedPath)}")
+        os.makedirs(os.path.dirname(fixedPath))
+    return fixedPath
+    
