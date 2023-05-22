@@ -1,7 +1,7 @@
 """Miscellaneous assorted utilities"""
 
 # Author: Luke Henderson
-__version__ = '1.3'
+__version__ = '1.4'
 
 import sys
 import os
@@ -267,3 +267,58 @@ def listConv(listOfDict):
             ret[key].append(value)
     return ret
     
+def pth(path, mode='abs'):
+    '''Platform-aware file path converter \n
+    Args:
+        path [str]: filepath to be converted \n
+        mode [str, optional]: mode to run \n
+            'abs': absolute path mode
+            'rel0': relative path mode (normal) \n
+            'rel1': relative path mode (up one directory)
+    Return:
+        [str] converted file path'''
+    #input parameter validation
+    if not isinstance(path, str):
+        cl.red('Error (utils.py): path is not string')
+        dt.info(path, 'path')
+        exit()
+    #convert filepath
+    fixedPath = None
+    plat = platform.system()
+    if plat == "Windows":
+        if len(path) >= 6:
+            if path[:4]=='home' or path[:6]=='/home/' or path[:6]=='\\home\\':
+                cl.yellow(f'Warning (utils.py): Incorrect absolute path "{path}" for platform "{plat}"')
+        fixedPath = path.replace('\\', '/')
+    elif plat == "Linux":
+        if len(path) >= 3:
+            if path[:2]=='C:' or path[:3]=='\\C:' or path[:3]=='/C:':
+                cl.yellow(f'Warning (utils.py): Incorrect absolute path "{path}" for platform "{plat}"')
+        fixedPath = path.replace('\\', '/')
+    else:
+        cl.red('Error (utils.py): Platform not supported')
+        dt.info(plat, 'platform')
+        exit()
+    #rel mode
+    if mode[:3] == 'rel':
+        baseDir = os.getcwd()
+        if mode == 'rel0':
+            pass
+        if mode == 'rel1':
+            baseDir = os.path.dirname(baseDir)
+        if mode == 'rel2':
+            baseDir = os.path.dirname(os.path.dirname(baseDir))
+        if fixedPath[0]=='/' or fixedPath[0]=='\\':
+            pass
+        else:
+            cl.red(f'Error (utils.py): Relative paths must start with separator: "{fixedPath}"')
+            exit()
+        fixedPath = baseDir + fixedPath
+    #final error handling
+    if '//' in fixedPath or '\\\\' in fixedPath:
+        cl.red(f'Error (utils.py): Conveted filepath contains doubled separators: "{fixedPath}"')
+        exit()
+    if fixedPath == None:
+        cl.red(f'Error (utils.py): fixedPath is None')
+        exit()
+    return fixedPath
