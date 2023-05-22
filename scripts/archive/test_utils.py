@@ -43,9 +43,12 @@ progStart = time.time()
 
 '''test filepath handler'''
 
-baseDir = os.path.dirname(os.getcwd())
-myPth = ut.pth(baseDir + f'\\datalogs\\using\\absolute')
-print(myPth)
+# myPth = ut.pth('')
+# print(myPth)
 
-myPth = ut.pth('/datalogs/using/relative', 'rel1')
-print(myPth)
+# baseDir = os.path.dirname(os.getcwd())
+# myPth = ut.pth(baseDir + f'\\datalogs\\using\\absolute')
+# print(myPth)
+
+# myPth = ut.pth('/datalogs/using/relative', 'rel1')
+# print(myPth)

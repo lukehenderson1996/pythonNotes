@@ -1,7 +1,7 @@
 """Miscellaneous assorted utilities"""
 
 # Author: Luke Henderson
-__version__ = '1.4'
+__version__ = '1.41'
 
 import sys
 import os
@@ -289,7 +289,7 @@ def pth(path, mode='abs'):
         if len(path) >= 6:
             if path[:4]=='home' or path[:6]=='/home/' or path[:6]=='\\home\\':
                 cl.yellow(f'Warning (utils.py): Incorrect absolute path "{path}" for platform "{plat}"')
-        fixedPath = path.replace('\\', '/')
+        fixedPath = path.replace('/', '\\')
     elif plat == "Linux":
         if len(path) >= 3:
             if path[:2]=='C:' or path[:3]=='\\C:' or path[:3]=='/C:':
