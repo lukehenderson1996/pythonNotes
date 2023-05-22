@@ -117,14 +117,14 @@ class LOGGER:
             sep = '/'
             incorrectSep = '\\'
         if prefix and incorrectSep in prefix:
-            cl.red('Error (logger.py): Incorrect separator in prefix')
-            exit()
+            # cl.red('Error (logger.py): Incorrect separator in prefix')
+            prefix = ut.pth(prefix)
         if filename and incorrectSep in filename:
-            cl.red('Error (logger.py): Incorrect separator in filename')
-            exit()
+            # cl.red('Error (logger.py): Incorrect separator in filename')
+            filename = ut.pth(filename)
         if absPath and incorrectSep in absPath:
-            cl.red('Error (logger.py): Incorrect separator in absPath')
-            exit()
+            # cl.red('Error (logger.py): Incorrect separator in absPath')
+            absPath = ut.pth(absPath)
 
         #manage and open file(s)
         if not (csv or xml):
