@@ -174,7 +174,8 @@ def objToLiteral(obj):
     if isinstance(obj, (int, float, bool)):
         return str(obj)
     elif isinstance(obj, str):
-        return f"'{obj}'"
+        # return f"'{obj}'"
+        return f'"{obj}"'
     elif isinstance(obj, list):
         items = ", ".join(objToLiteral(item) for item in obj)
         if len(items) > 100:
