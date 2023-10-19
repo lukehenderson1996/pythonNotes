@@ -1,7 +1,7 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-__version__ = '3.2'
+__version__ = '3.21'
 
 import sys
 
@@ -94,7 +94,10 @@ def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
         print(preText + f'iterable, of type {type(obj)}, length {len(obj)}, contents:')
         if len(obj)==0:
             #empty iterable
-            print(prefix + '\t' + 'Empty, length of zero')
+            if dictKey:
+                print('\t\t' + 'Empty, length of zero')
+            else:
+                print(prefix + '\t' + 'Empty, length of zero')
         else:
             #valid iterable, iterate and print info
             for el in obj:
