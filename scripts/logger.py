@@ -1,7 +1,7 @@
 """Logger class with multiple output options and data handling tools"""
 
 # Author: Luke Henderson
-__version__ = '1.3'
+__version__ = '1.31'
 
 import os
 import platform
@@ -218,7 +218,10 @@ class LOGGER:
             data [list of str/int/float]: Any data input to be logged under
                 previously defined columns (self.logCols)'''
         #data copy/conditioning/validating
-        data = dataInput.copy()
+        if hasattr(dataInput, 'copy'):
+            data = dataInput.copy()
+        else:
+            data = dataInput
         for i in range(len(data)):
             if isinstance(data[i], str):
                 pass
