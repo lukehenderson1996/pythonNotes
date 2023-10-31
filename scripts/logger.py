@@ -1,7 +1,8 @@
-"""Logger class with multiple output options and data handling tools"""
+'''Logger class with multiple output options and data handling tools'''
 
 # Author: Luke Henderson
 __version__ = '1.31'
+_PY_VERSION = (3, 7)
 
 import os
 import platform

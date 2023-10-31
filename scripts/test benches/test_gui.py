@@ -1,6 +1,8 @@
-"""Test code for gui.py"""
+'''Test code for gui.py'''
 
 # Author: Luke Henderson 
+__version__ = '1.0'
+_PY_VERSION = (3, 7)
 
 import os
 import time

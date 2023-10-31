@@ -1,7 +1,8 @@
-"""Miscellaneous assorted utilities"""
+'''Miscellaneous assorted utilities'''
 
 # Author: Luke Henderson
 __version__ = '1.41'
+_PY_VERSION = (3, 7)
 
 import sys
 import os

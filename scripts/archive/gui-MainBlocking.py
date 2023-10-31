@@ -1,3 +1,9 @@
+'''Old gui code, block the main thread'''
+
+# Author: Luke Henderson
+__version__ = '1.0'
+_PY_VERSION = (3, 7)
+
 import os
 import time
 from datetime import datetime

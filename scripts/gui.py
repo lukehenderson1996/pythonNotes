@@ -1,7 +1,8 @@
-"""Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue"""
+'''Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue'''
 
 # Author: Luke Henderson
 __version__ = '2.8'
+_PY_VERSION = (3, 7)
 
 import os
 import platform

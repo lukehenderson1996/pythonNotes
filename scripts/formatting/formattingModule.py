@@ -2,6 +2,7 @@
 
 # Author: xxxxx
 __version__ = '0.0'
+_PY_VERSION = (3, 11)
 
 'external imports here'
 
@@ -35,3 +36,7 @@ class NAME: #or, ClassName
 
     def publicFunction(self, arg1, arg2) -> float:
         return 2.3
+    
+
+if __name__ == '__main__':
+    'test bench here'

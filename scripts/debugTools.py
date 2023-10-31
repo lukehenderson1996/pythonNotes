@@ -2,6 +2,7 @@
 
 # Author: Luke Henderson 
 __version__ = '3.21'
+_PY_VERSION = (3, 7)
 
 import sys
 

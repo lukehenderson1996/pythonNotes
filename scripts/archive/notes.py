@@ -1,3 +1,9 @@
+'''Python notes'''
+
+# Author: Luke Henderson
+__version__ = '1.0'
+_PY_VERSION = (3, 7)
+
 #threading and GUI:
 
 # https://stackoverflow.com/questions/8309902/are-python-instance-variables-thread-safe

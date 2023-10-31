@@ -2,12 +2,13 @@
 
 # Author: Luke Henderson
 __version__ = '0.8'
+_PY_VERSION = (3, 7)
 
 import os
 import platform
 # import colorama
 
-if platform.system() == "Windows":
+if platform.system() == 'Windows':
     os.system('') #enable VT100 escape sequence for Windows 10
 
 HEADER = '\033[95m'

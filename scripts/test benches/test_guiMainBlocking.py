@@ -1,4 +1,8 @@
-#test code
+'''Gui (main blocking) test'''
+
+# Author: Luke Henderson
+__version__ = '1.0'
+_PY_VERSION = (3, 7)
 
 import os
 import time
