@@ -1,4 +1,4 @@
-'''Test code for logger.py'''
+'''Test code for logger.py (validated for v)'''
 
 # Author: Luke Henderson
 __version__ = '1.0'

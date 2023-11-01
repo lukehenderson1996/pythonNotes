@@ -1,4 +1,4 @@
-'''Test code for gui.py'''
+'''Test code for gui.py (validated for v)'''
 
 # Author: Luke Henderson 
 __version__ = '1.0'

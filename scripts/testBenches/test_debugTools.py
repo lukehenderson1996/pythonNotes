@@ -1,7 +1,7 @@
-'''Test code for debugTools.py'''
+'''Test code for debugTools.py (validated for v3.21)'''
 
 # Author: Luke Henderson
-__version__ = '1.0'
+__version__ = '2.0'
 _PY_VERSION = (3, 7)
 
 import os
@@ -11,7 +11,9 @@ from datetime import datetime
 import colors as cl
 import debugTools as dt
 
-cl.green('Program Start')
+PRINT_EN = True
+if PRINT_EN:
+    cl.green('Test Code Start')
 progStart = time.time()
 
 class myClass():
@@ -22,25 +24,26 @@ class myClass():
 
 #string
 cl.blue('Testing a simple string with color')
-dt.info('simpleObj', 'stringcontents', format='normal', color='WARNING')
+dt.info('stringcontents', 'simpleObj')
+dt.info('stringcontents', 'simpleObj', color='WARNING')
 print('\n\n')
 
 #various simple tests
 cl.blue('Testing None')
 myObj = None
-dt.info('myObj', myObj, format='normal')
+dt.info(myObj, 'myObj')
 cl.blue('Testing Tuple')
 myObj = ('hey', 'hi', 'hello')
-dt.info('myObj', myObj, format='normal')
+dt.info(myObj, 'myObj')
 cl.blue('Testing List')
 myObj = ['hey', 'hi', 'hello']
-dt.info('myObj', myObj, format='normal')
+dt.info(myObj, 'myObj')
 cl.blue('Testing List of int')
 internalObj = [1, 3]
-dt.info('myObj', internalObj, format='normal')
+dt.info(internalObj, 'myObj')
 cl.blue('Testing List of assorted things')
 myObj = ['hey', internalObj, 'hello', None, [], (None, None, [], None)]
-dt.info('myObj', myObj, format='normal')
+dt.info(myObj, 'myObj')
 print('\n\n')
 
 #dictionary of many things
@@ -48,7 +51,7 @@ cl.blue('Testing a dictionary of assorted things')
 internalObj = [1, 3, {'dictItem1': 'stringCont', 'dictItem2': 829.44}, 'last item of internalObj']
 midObj = ['hey', internalObj, 'hello', None, [], (None, None, [], None)]
 myObj = {'name': 'Dionysia', 'age': 28, 'bigInternal': midObj, 'location': 'Athens'}
-dt.info('myObj', myObj, format='normal')
+dt.info(myObj, 'myObj')
 
 #class
 cl.blue('Testing a class')
@@ -61,10 +64,10 @@ dt.pprintInfo(myObj)
 
 #dictionary bug test, for version 2.6
 #should be able to support str/int/float/bool keys
-dt.info('trickyDict', {'name': 'Dionysia', 0: 'This one has an int key', 5.345: 'This one has a float key', True: 'This one has a bool key'})
+dt.info({'name': 'Dionysia', 0: 'This one has an int key', 5.345: 'This one has a float key', True: 'This one has a bool key'}, 'trickyDict')
 
 #getting entire scope of currently running python script:
 cl.blue('Global variables:')
-dt.info('globals', dict(globals()))
+dt.info(dict(globals()), 'globals')
 cl.blue('Local variables:')
-dt.info('locals', dict(locals()))
+dt.info(dict(locals()), 'locals')

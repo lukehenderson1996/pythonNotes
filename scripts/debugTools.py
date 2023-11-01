@@ -1,8 +1,8 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-__version__ = '3.21'
-_PY_VERSION = (3, 7)
+__version__ = '3.22'
+_PY_VERSION = (3, 11)
 
 import sys
 
@@ -153,11 +153,8 @@ def pprintInfo(obj):
     '''Wrapper for pprint\n
     Args:
         obj [any]: object to pprint'''
-    if 'pprint' in sys.modules:
-        import pprint
-        pprint.pprint(obj)
-    else:
-        cl.red('Error, pprint not installed')
+    import pprint
+    pprint.pprint(obj)
 
 def genPyLiteral(obj, lb='myVar'):
     '''Converts and prints any object to pythonic literal code\n
