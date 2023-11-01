@@ -2,6 +2,9 @@
 *.pyc
 __pycache__
 
+#vs code
+.vscode/*
+
 #datalogs
 *.xls
 *.xlsx
