@@ -1,4 +1,4 @@
-'''Test code for debugTools.py (validated for v3.21)'''
+'''Test code for debugTools.py (validated for v3.22)'''
 
 # Author: Luke Henderson
 __version__ = '2.0'

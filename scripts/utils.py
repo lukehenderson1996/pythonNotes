@@ -1,8 +1,8 @@
 '''Miscellaneous assorted utilities'''
 
 # Author: Luke Henderson
-__version__ = '1.41'
-_PY_VERSION = (3, 7)
+__version__ = '1.5'
+_PY_VERSION = (3, 11)
 
 import sys
 import os
@@ -266,6 +266,21 @@ def listConv(listOfDict):
             if key not in ret:
                 ret[key] = []
             ret[key].append(value)
+    return ret
+
+def dictConv(dictOfList):
+    '''Converts dictionary of lists to list of dictionaries.\n
+    Internal lists must be of the same length\n
+    Args:
+        dictOfList [dict of lists]: 
+    Return:
+        [list] list of dicts'''
+    ret = []
+    listLenList = [len(item) for item in dictOfList.values()]
+    listLen = max(listLenList)
+    for i in range(listLen):
+        thisDict = {key: dictOfList[key][i] for key in dictOfList}
+        ret.append(thisDict)
     return ret
     
 def pth(path, mode='abs'):
