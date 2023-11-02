@@ -288,7 +288,7 @@ def pth(path, mode='abs'):
     Args:
         path [str]: filepath to be converted \n
         mode [str, optional]: mode to run \n
-            'abs': absolute path mode \n
+            'abs': absolute path mode (default) \n
             'rel0': relative path mode (normal) \n
             'rel1': relative path mode (up one directory) \n
             'rel2': relative path mode (up 2 directories)
