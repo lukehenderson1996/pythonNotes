@@ -7,7 +7,7 @@ _PY_VERSION = (3, 11)
 import colors as cl
 import debugTools as dt
 
-class NAME: #or, ClassName
+class NAME:
     '''NAME class'''
 
     def __init__(self):
