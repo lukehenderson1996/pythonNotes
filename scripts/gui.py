@@ -1,8 +1,8 @@
 '''Thread-safe GUI module. Follows a producer-consumer structure utilizing a queue'''
 
 # Author: Luke Henderson
-__version__ = '2.8'
-_PY_VERSION = (3, 7)
+__version__ = '2.81'
+_PY_VERSION = (3, 11)
 
 import os
 import platform
@@ -173,10 +173,11 @@ class GUI:
         self.root.wm_title(self.windowTitle)
         if self.windowGeom != None:
             self.root.geometry(self.windowGeom) #to prevent eye sore of extra window movement
-        if platform.system() == "Windows":
-            self.root.state('zoomed') #only for windows, either line throws errors in wrong platform
-        else:
-            self.root.attributes('-zoomed', True) #only for linux, either line throws errors in wrong platform
+        if self.windowMax and self.windowGeom == None:
+            if platform.system() == "Windows":
+                self.root.state('zoomed') #only for windows, either line throws errors in wrong platform
+            else:
+                self.root.attributes('-zoomed', True) #only for linux, either line throws errors in wrong platform
 
         #icon
         if self.icon != None:
