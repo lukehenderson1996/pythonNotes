@@ -14,7 +14,7 @@ cl.green('Program Start')
 #----------------------------------------------------------------init----------------------------------------------------------------
 #assert correct module versions 
 modV = {cl:   '0.8',
-        dt:   '3.21'}
+        dt:   '3.22'}
 for module in modV:
     errMsg = f'Expecting version {modV[module]} of "{os.path.basename(module.__file__)}". Imported {module.__version__}'
     assert module.__version__ == modV[module], errMsg
