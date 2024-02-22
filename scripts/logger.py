@@ -1,7 +1,7 @@
 '''Logger class with multiple output options and data handling tools'''
 
 # Author: Luke Henderson
-__version__ = '1.31'
+__version__ = '1.32'
 _PY_VERSION = (3, 7)
 
 import os
@@ -103,6 +103,7 @@ class LOGGER:
             assert isinstance(logCols, list)
             for col in logCols:
                 assert isinstance(col, str)
+                assert not ',' in col
         assert isinstance(prefix, str)
         assert isinstance(filename, str) or filename==None
         assert isinstance(quiet, bool)
