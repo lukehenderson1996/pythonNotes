@@ -1,5 +1,9 @@
 Python Notes written by Luke Henderson
 
+Required imports:
+pip install pillow
+
+
 BUGS:
 general
     use type checking/click lower right hand corer {} to turn it on in a .py file
