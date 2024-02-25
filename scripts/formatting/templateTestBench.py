@@ -8,5 +8,5 @@ import time
 
 import colors as cl
 
-cl.green('Test Bench Start')
+cl.gn('Test Bench Start')
 progStart = time.time()

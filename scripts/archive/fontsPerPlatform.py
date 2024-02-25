@@ -12,7 +12,7 @@ import colors as cl
 import debugTools as dt
 import logger as lg
 
-cl.green('Program Start')
+cl.gn('Program Start')
 progStart = time.time()
 
 

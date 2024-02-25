@@ -42,41 +42,49 @@ Notes:
         print() or
         cl.bl()'''
 def ul(printStr):
+    '''Prints in UNDERLINE'''
     print(UNDERLINE + str(printStr) + ENDC)
 def underline(printStr):
     ul(printStr)
     
 def bl(printStr):
+    '''Prints in BLUE'''
     print(BLUE + str(printStr) + ENDC)
 def blue(printStr):
     bl(printStr)
     
 def rd(printStr):
+    '''Prints in RED'''
     print(RED + str(printStr) + ENDC)
 def red(printStr):
     rd(printStr)
     
 def gn(printStr):
+    '''Prints in GREEN'''
     print(GREEN + str(printStr) + ENDC)
 def green(printStr):
     gn(printStr)
     
 def yl(printStr):
+    '''Prints in YELLOW'''
     print(YELLOW + str(printStr) + ENDC)
 def yellow(printStr):
     yl(printStr)
     
 def pr(printStr):
+    '''Prints in PURPLE'''
     print(PURPLE + str(printStr) + ENDC)
 def purple(printStr):
     pr(printStr)
     
 def gy(printStr):
+    '''Prints in GRAY'''
     print(GRAY + str(printStr) + ENDC)
 def gray(printStr):
     gy(printStr)
     
 def cy(printStr):
+    '''Prints in CYAN'''
     print(CYAN + str(printStr) + ENDC)
 def cyan(printStr):
     cy(printStr)

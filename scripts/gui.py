@@ -39,7 +39,7 @@ if platform.system() == "Windows":
     windll.shcore.SetProcessDpiAwareness(1) #1
 
 class LABEL:
-    """Helper class for creation of custom labels"""
+    '''Helper class for creation of custom labels'''
     idNum = 0
 
     # id : str
@@ -51,7 +51,7 @@ class LABEL:
     y : int
 
     def __init__(self, color='Black', size=12, font="Arial", labType='text'):
-        """generate unique LABEL object. Not thread safe\n
+        '''generate unique LABEL object. Not thread safe\n
         Args:
             id [int]: unique ID for new custom label. Recommend making this
                 the same as the variable name in main code
@@ -64,7 +64,7 @@ class LABEL:
                 image
         Usage (outdated):
             'myLabel', "~Label's Text~", 'Blue', 18
-        """
+        '''
         #handle id, not thread safe due to simultaneous calls racing incrementation
         #print(f'ID: {id(self)}') #could also use this for thread safe version
         self.id= LABEL.idNum
@@ -110,7 +110,7 @@ class LABEL:
                 #text indicator, could be numeric or str
                 #error handling
                 if not (('indLabel' in kwargs) or (not self.indLabel is None)):
-                    cl.red(f'GUI LABEL Error: set expected parameter "indLabel"')
+                    cl.rd(f'GUI LABEL Error: set expected parameter "indLabel"')
                     return
                 #set vars
                 if self.indLabel is None:
@@ -120,10 +120,10 @@ class LABEL:
         return self
 
 class GUI:
-    """Outer layer to drive App class in a separate thread"""
+    '''Outer layer to drive App class in a separate thread'''
 
     def __init__(self, guiQ, windowTitle='Python GUI', updateDelay=None, quiet=False, windowGeom=None, windowMax=False):
-        """Initialize the gui\n
+        '''Initialize the gui\n
         Args:
             guiQ [queue.queue object]: queue of tasks to be consumed/executed
                 Note: This is the only way to interact with a presently
@@ -147,7 +147,7 @@ class GUI:
             Can set these variables after init:
                 windowGeom [str, currently not in use]: size/location of gui window. format:
                     format: XxY+(-)Xoff+(-)Yoff
-                    example: '766x792+-7+0'"""
+                    example: '766x792+-7+0' '''
         self.guiQ = guiQ
         self.windowTitle = windowTitle
         self.updateDelay = updateDelay
@@ -160,12 +160,12 @@ class GUI:
         self.icon = None
 
     def start(self):
-        """Starts gui in separate thread, non blocking"""
+        '''Starts gui in separate thread, non blocking'''
         mainThd = Thread(target=self.mainLoop, daemon=True)
         mainThd.start()
 
     def mainLoop(self):
-        """blocking init and mainloop, to be threaded"""
+        '''blocking init and mainloop, to be threaded'''
         #init app
         self.root = tk.Tk()
         self.app=App(self.guiQ, self.updateDelay, self.quiet, self.root, windowMax=self.windowMax)
@@ -248,10 +248,10 @@ class App(tk.Frame):
 
         #start main outer loop
         if not self.quiet:
-            cl.blue('Successful start ' + cl.CYAN + 'GUI thread')
+            cl.bl(f'Successful start {cl.CY}GUI thread')
         self.outerLoop()
 
-    """---------------------------------------GUI main "outer" loop---------------------------------------"""
+    '''---------------------------------------GUI main "outer" loop---------------------------------------'''
     def outerLoop(self):
         while not self.startGUI:
             self.after(int(self.updateDelay*1000), self.outerLoop)
@@ -321,7 +321,7 @@ class App(tk.Frame):
         #loop back (Note the .after method is non-blocking)
         self.after(int(self.updateDelay*1000), self.outerLoop)
 
-    """-----------------------utilities-----------------------"""
+    '''-----------------------utilities-----------------------'''
     def outerLoopInit(self):
         #dynamic window geometry adjustment for left half of screen
         maxWd = int(self.master.winfo_width()) #1920
@@ -356,24 +356,24 @@ class App(tk.Frame):
         # while not self.killClearance:
         #     pass
         if not self.quiet:
-            cl.blue('Exiting ' + cl.CYAN + 'GUI thread')
+            cl.bl(f'Exiting {cl.CY}GUI thread')
         # self.quit()
         self.master.destroy()
 
-    """-------------------assorted functions------------------"""
+    '''-------------------assorted functions------------------'''
     def update_clock(self):
         now = datetime.now().strftime("%H:%M:%S.%f")[:-3]
         self.clockLbl.configure(text=now)
 
     def aPrint(self, pText):
-        """rolling printer "app Print" similar to cmd/shell print()
-        pText = text to print, can include newlines"""
+        '''rolling printer "app Print" similar to cmd/shell print()
+        pText = text to print, can include newlines'''
         if platform.system() == "Windows":
             BUFFER_SIZE = 45 #for now just to equalize platforms
         else:
             BUFFER_SIZE = 45 #for now just to equalize platforms
         if not isinstance(pText, str):
-            cl.red('GUI Error: aPrint() List contains something other than a string')
+            cl.rd('GUI Error: aPrint() List contains something other than a string')
             return
         #split on newlines
         splitPText = pText.split('\n')
@@ -387,12 +387,12 @@ class App(tk.Frame):
         origRollPList = self.rollPList
         while len(self.rollPList) > BUFFER_SIZE:
             if len(self.rollPList) == 0:
-                cl.red('Error (gui.py): self.rollPList is empty')
+                cl.rd('Error (gui.py): self.rollPList is empty')
                 dt.info(origRollPList, 'origRollPList')
                 dt.info(self.rollPList, 'self.rollPList')
                 dt.info(pText, 'pText')
                 dt.info(BUFFER_SIZE, 'BUFFER_SIZE')
-                cl.yellow('Continuing...')
+                cl.yl('Continuing...')
             self.rollPList.pop(0)
         pStr = ''
         for el in self.rollPList:
@@ -400,23 +400,23 @@ class App(tk.Frame):
         self.rollPrLbl.configure(text=pStr)
 
     def printBoth(self, pText):
-            """Prints to cmd/shell and app rolling printer"""
+            '''Prints to cmd/shell and app rolling printer'''
             print(pText)
             self.aPrint(pText)
 
     def printError(self, pText):
-            """Prints red to cmd/shell and black to app rolling printer"""
-            cl.red(pText)
+            '''Prints red to cmd/shell and black to app rolling printer'''
+            cl.rd(pText)
             self.aPrint(pText)
 
     def setLabel(self, lb):
-        """Creates/updates custom labels\n
+        '''Creates/updates custom labels\n
         Create: utilizes all input object parameters\n 
         Update: updates text, position, color of label\n
         Args:
             lb [obj of class LABEL]: input parameter object. (short for label)\n
         Vars from this class' __init__():
-            self.userLabels = {}"""
+            self.userLabels = {}'''
         if not (lb.id in self.userLabels):
             #init label
             if lb.labType=='text' or lb.labType=='textInd':

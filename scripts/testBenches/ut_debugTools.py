@@ -35,5 +35,5 @@ class TestDtModule(unittest.TestCase):
 
 if __name__ == '__main__':
     import colors as cl
-    cl.green("Unit Test Start")
+    cl.gn("Unit Test Start")
     unittest.main()

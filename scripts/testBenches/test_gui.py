@@ -25,7 +25,7 @@ COMMON_FONTS = ['Trebuchet MS', #fonts present in both Windows and Ubuntu 22 (af
         'Courier New',
         'Impact']
 
-cl.green('Program Start')
+cl.gn('Program Start')
 progStart = time.time()
 
 guiQ = queue.Queue()

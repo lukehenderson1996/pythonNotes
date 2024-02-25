@@ -10,7 +10,7 @@ import unittest
 import colors as cl
 import testBenches.ut_debugTools as ut_debugTools
 
-cl.green('All Test Benches Start')
+cl.gn('All Test Benches Start')
 progStart = time.time()
 
 

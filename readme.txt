@@ -3,6 +3,13 @@ Python Notes written by Luke Henderson
 Required imports:
 pip install pillow
 
+Recomended:
+pip install numpy
+
+How????
+pip install win32gui
+pip install pywintypes
+
 
 BUGS:
 general
@@ -48,9 +55,3 @@ pythonNotes git repo
         test modules for advanced examples
             test_[module name]
         
-
-
-Adding python path:
-add SYSTEM environmental variable call PYTHONPATH, equal to C:\ASC\SENSING\CSPS\hwdriver\scripts
-Press OK and restart your computer for the changes to take effect
-will work for both VS code and python from cmd

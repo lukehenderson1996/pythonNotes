@@ -18,4 +18,4 @@ class NAME:
 
 
 if __name__ == '__main__':
-    cl.green('Test Code Start')
+    cl.gn('Test Code Start')

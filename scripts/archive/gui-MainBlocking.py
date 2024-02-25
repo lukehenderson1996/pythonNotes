@@ -15,10 +15,10 @@ import contextlib
 
 
 class GUI:
-    """Outer layer to drive App class"""
+    '''Outer layer to drive App class'''
 
     def __init__(self, windowTitle, updateDelay):
-        """Initialize the gui"""
+        '''Initialize the gui'''
         self.root = tk.Tk()
         self.app=App(self.root)
         self.app.updateDelay = updateDelay

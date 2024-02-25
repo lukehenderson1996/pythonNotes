@@ -2,7 +2,7 @@
 
 # Author: Luke Henderson
 __version__ = '1.0'
-_PY_VERSION = (3, 7)
+_PY_VERSION = (3, 11)
 
 # from colorama import init, Fore, Back, Style
 

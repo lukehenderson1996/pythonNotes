@@ -9,7 +9,7 @@ import os
 import colors as cl
 import debugTools as dt
 
-cl.green('Program Start')
+cl.gn('Program Start')
 
 #----------------------------------------------------------------init----------------------------------------------------------------
 #assert correct module versions 

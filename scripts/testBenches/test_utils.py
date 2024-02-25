@@ -12,7 +12,7 @@ import colors as cl
 import debugTools as dt
 import utils as ut
 
-cl.green('Program Start')
+cl.gn('Program Start')
 progStart = time.time()
 
 #progress printout
@@ -57,9 +57,9 @@ print(myPth)
 
 #test list/dict functions
 myDictList = [{'key1':'value1', 'key2':None}, {'key1':'value2', 'key2':None}, {'key1':'value3', 'key2':None}]
-cl.blue('Original:')
+cl.bl('Original:')
 dt.pprintInfo(myDictList)
-cl.blue('Converted to dict:')
+cl.bl('Converted to dict:')
 dt.pprintInfo(myListDict := ut.listConv(myDictList))
-cl.blue('Converted to list:')
+cl.bl('Converted to list:')
 dt.pprintInfo(myDictList := ut.dictConv(myListDict))
