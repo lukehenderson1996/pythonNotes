@@ -248,7 +248,7 @@ class App(tk.Frame):
 
         #start main outer loop
         if not self.quiet:
-            cl.blue('Successful start ' + cl.CMDCYAN + 'GUI thread')
+            cl.blue('Successful start ' + cl.CYAN + 'GUI thread')
         self.outerLoop()
 
     """---------------------------------------GUI main "outer" loop---------------------------------------"""
@@ -356,7 +356,7 @@ class App(tk.Frame):
         # while not self.killClearance:
         #     pass
         if not self.quiet:
-            cl.blue('Exiting ' + cl.CMDCYAN + 'GUI thread')
+            cl.blue('Exiting ' + cl.CYAN + 'GUI thread')
         # self.quit()
         self.master.destroy()
 

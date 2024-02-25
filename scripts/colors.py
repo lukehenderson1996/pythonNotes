@@ -1,54 +1,87 @@
 '''Module for easy colored text on terminal prints'''
 
 # Author: Luke Henderson
-__version__ = '0.8'
-_PY_VERSION = (3, 7)
+__version__ = '1.0'
+_PY_VERSION = (3, 11)
 
 import os
 import platform
-# import colorama
 
 if platform.system() == 'Windows':
     os.system('') #enable VT100 escape sequence for Windows 10
 
-HEADER = '\033[95m'
-OKBLUE = '\033[94m'
-OKGREEN = '\033[92m'
-WARNING = '\033[93m'
-FAIL = '\033[91m'
-ENDC = '\033[0m'
-BOLD = '\033[1m'
+ENDC = '\033[0m' #ENDC, resets to normal
 UNDERLINE = '\033[4m'
-CMDBLUE = '\033[36m'
-CMDCYAN = '\033[96m'
 
-'''Prints in color of function name\n
+BLUE = '\033[94m'
+RED = '\033[91m'
+GREEN = '\033[92m'
+YELLOW = '\033[33m'
+PURPLE = '\033[95m'
+GRAY = '\033[90m'
+CYAN = '\033[96m'
+
+EC = ENDC
+UL = UNDERLINE
+
+BL = BLUE
+RD = RED
+GN = GREEN
+YL = YELLOW
+PR = PURPLE
+GY = GRAY
+CY = CYAN
+
+'''Prints in color of function name
 Args:
     printStr [str, other]: input text to print in color
-        converted via str()'''
-def blue(printStr):
-    print(OKBLUE + str(printStr) + ENDC)
-
-def red(printStr):
-    print(FAIL + str(printStr) + ENDC)
-
-def green(printStr):
-    print(OKGREEN + str(printStr) + ENDC)
-
-def yellow(printStr):
-    print(WARNING + str(printStr) + ENDC)
-
-def purple(printStr):
-    print(HEADER + str(printStr) + ENDC)
-
-'''Cmd print colors (echo command)
-    can accept %DATE/TIME% placeholders:
-Args:
-    printStr [str, other]: input text to print in color\n
-        converted via str()'''
-def cmdBlue(printStr):
-    os.system('echo ' + CMDBLUE + str(printStr) + ENDC)
+        converted via str()
+Notes:
+    Each function has a shorthand version that takes up the same ammount of space as a print()
+    Example:
+        print() or
+        cl.bl()'''
+def ul(printStr):
+    print(UNDERLINE + str(printStr) + ENDC)
+def underline(printStr):
+    ul(printStr)
     
-def cmdCyan(printStr):
-    os.system('echo ' + CMDCYAN + str(printStr) + ENDC)
+def bl(printStr):
+    print(BLUE + str(printStr) + ENDC)
+def blue(printStr):
+    bl(printStr)
+    
+def rd(printStr):
+    print(RED + str(printStr) + ENDC)
+def red(printStr):
+    rd(printStr)
+    
+def gn(printStr):
+    print(GREEN + str(printStr) + ENDC)
+def green(printStr):
+    gn(printStr)
+    
+def yl(printStr):
+    print(YELLOW + str(printStr) + ENDC)
+def yellow(printStr):
+    yl(printStr)
+    
+def pr(printStr):
+    print(PURPLE + str(printStr) + ENDC)
+def purple(printStr):
+    pr(printStr)
+    
+def gy(printStr):
+    print(GRAY + str(printStr) + ENDC)
+def gray(printStr):
+    gy(printStr)
+    
+def cy(printStr):
+    print(CYAN + str(printStr) + ENDC)
+def cyan(printStr):
+    cy(printStr)
+    
+
+
+
 

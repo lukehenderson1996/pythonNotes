@@ -84,9 +84,9 @@ def printBoolTable(inDict):
         boolStr = ''
         for el in inDict[key]:
             if el:
-                boolStr += cl.CMDCYAN + str(int(el))
+                boolStr += cl.CYAN + str(int(el))
             else:
-                boolStr += cl.HEADER + str(int(el))
+                boolStr += cl.PURPLE + str(int(el))
         print(key + ': [ ' + boolStr + cl.ENDC + f' ] len={len(inDict[key])}')
 
 def dateStr(day) -> str:

@@ -27,7 +27,7 @@ class GUI:
 
     def runMain(self):
         #start loop
-        cl.blue('Successful start ' + cl.CMDCYAN + 'GUI')
+        cl.blue('Successful start ' + cl.CYAN + 'GUI')
         self.root.mainloop()
 
 class App(tk.Frame):
