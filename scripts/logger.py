@@ -14,25 +14,23 @@ import debugTools as dt
 import utils as ut
 
 METRIC_PREFIX_SCALE = {
-"f":-15,
-"p":-12,
-"n":-9,
-"u":-6,
-"m":-3,
-" ":0,
-"":0,
-"k":+3,
-"K":+3,
-"M":+6,
-"G":+9,
-"P":+12,
-"E":+15
-}
+    "f":-15,
+    "p":-12,
+    "n":-9,
+    "u":-6,
+    "m":-3,
+    " ":0,
+    "":0,
+    "k":+3,
+    "K":+3,
+    "M":+6,
+    "G":+9,
+    "P":+12,
+    "E":+15 }
 
 DEFAULT_HEADER = {
-'csv':'Date,Time,BTCUSD,Site\n',
-'xml':'<?xml version="1.0" encoding="UTF-8"?>\n<root>\n\n'
-}
+    'csv':'Date,Time,BTCUSD,Site\n',
+    'xml':'<?xml version="1.0" encoding="UTF-8"?>\n<root>\n\n' }
 DEFAULT_FILENAME = 'datalog'
 DEFAULT_FILENAME_CSV = 'csv log'
 DEFAULT_FILENAME_XML = 'xml log'
