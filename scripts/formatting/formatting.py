@@ -12,8 +12,8 @@ _PY_VERSION = (3, 11)
 
 #----------------------------------------------------------------init----------------------------------------------------------------
 #assert correct module versions 
-modV = {'modObj':   '0.8',
-        'modObj':   '1.3'}
+modV = {'modObj':   '1.0',
+        'modObj':   '3.22'}
 for module in modV:
     errMsg = f'Expecting version {modV[module]} of "{os.path.basename(module.__file__)}". Imported {module.__version__}'
     assert module.__version__ == modV[module], errMsg
