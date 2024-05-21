@@ -1,7 +1,7 @@
 '''plot.py: Plots data using seaborn and matplotlib'''
 
 # Author: Luke Henderson
-__version__ = '1.2'
+__version__ = '1.21'
 
 import math
 import time
@@ -20,7 +20,6 @@ import colors as cl
 import utils as ut
 import debugTools as dt
 
-#version with red as second option
 PLOT_COLORS = [
     "g",  # green
     "r",  # red
@@ -45,6 +44,51 @@ PLOT_COLORS = [
     "#F0FF00", "#A6FF00", "#5BFF00", "#00FF00", "#00FF64", "#0064FF", "#0000EF", "#6B00FF", "#C400FF", "#F900FF",
     "#FF002A", "#FF0064", "#FF9900", "#FFE600", "#FDFD00", "#FBFF00", "#B0FF00", "#66FF00", "#00FFEB", "#0049FF",
     "#0000A9", "#8300FF", "#D900FF", "#FF00BF", "#FF003F", "#FF5800", "#FFB200", "#FFF400", "#F6FF00", "#9FFF00"]
+
+
+def outerJoin(xListList, yListList):
+    '''Combines data with different x value sets.\n
+    y values will be set to None in the case of missing data\n
+    Args:
+        xListList [list of list of int/float]: sets of x values\n
+        yListList [list of list of int/float/bool/None]: sets of y values
+    Return:
+        [list of int/float, list of list of int/float/bool/None]
+    Notes:
+        xListList and yListList must be of the same length,\n
+        but the data sets themselves can be different lengths'''
+    assert len(xListList) == len(yListList)
+    masterLen = len(xListList)
+    for xList in xListList:
+        for item in xList:
+            assert isinstance(item, int) or isinstance(item, float)
+    for yList in yListList:
+        for item in yList:
+            assert isinstance(item, int) or isinstance(item, float) or (item is None)
+
+    # dt.info(xListList)
+    xMerged = []
+    for xList in xListList:
+        for item in xList:
+            if item in xMerged:
+                pass
+            else:
+                xMerged.append(item)
+    xMerged.sort()
+    # dt.info(xMerged, 'xMerged')
+
+    yMerged = []
+    for i in range(masterLen):
+        yMerged.append([]) #this new empty list can be accessed as yMerged[i]
+        for x in xMerged:
+            if x in xListList[i]:
+                thisIdx = xListList[i].index(x)
+                yMerged[i].append(yListList[i][thisIdx])
+            else:
+                yMerged[i].append(None)
+    # dt.info(yMerged, 'yMerged')
+
+    return xMerged, yMerged
 
 
 
@@ -129,7 +173,9 @@ class PLOTTER:
         plt.clf()
         plt.close(figStillOpen)
     
-    def scatterPlot(self, x=None, y=None, multiY=None, multiLabels=None, title=None, xlabel=None, ylabel=None, xFormat=None):
+    def scatterPlot(self, x=None, y=None, multiY=None, multiLabels=None, title=None, 
+                    xlabel=None, ylabel=None, xFormat=None, dotSize=8, connectLines=False, 
+                    engNotation=True, xTicksInsert=None):
         '''Plots data\n
         Args:
             x [np.array]: \n
@@ -155,9 +201,13 @@ class PLOTTER:
             assert len(multiY) == len(multiLabels)
             assert len(PLOT_COLORS) >= len(multiY)
             for item, label, color in zip(multiY, multiLabels, PLOT_COLORS ):
-                fig2 = sns_scatterplot(x=x, y=item, label=label, color=color, zorder=5, s=5, edgecolor='none')
+                if connectLines:
+                    plt.plot(x, item, linestyle='-', color=color, linewidth=1)
+                fig2 = sns_scatterplot(x=x, y=item, label=label, color=color, zorder=5, s=dotSize, edgecolor='none')
         else:
-            fig2 = sns_scatterplot(x=x, y=y, zorder=5, s=5, edgecolor='none') #x='Vgs', y='Ron' 
+            if connectLines:
+                plt.plot(x, y, linestyle='-', linewidth=1)
+            fig2 = sns_scatterplot(x=x, y=y, zorder=5, s=dotSize, edgecolor='none') #x='Vgs', y='Ron' 
 
         fig2.grid('True')
         # #log grid stuff
@@ -178,6 +228,11 @@ class PLOTTER:
                 xTicks.pop(-1)
                 xTicks.append(x[-1])
             fig2.set_xticks(xTicks)
+        #optional -40C ticks
+        if xTicksInsert:
+            xTicks = list(fig2.get_xticks())
+            xTicks.insert(0, xTicksInsert)
+            fig2.set_xticks(xTicks)
         #optional labeling
         if title:
             plt.title(title)
@@ -189,8 +244,9 @@ class PLOTTER:
         # plt.xticks(rotation=20)
         # plt.xticks([-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6])
         # formatting
-        formatter = EngFormatter()
-        plt.gca().yaxis.set_major_formatter(formatter)
+        if engNotation:
+            formatter = EngFormatter()
+            plt.gca().yaxis.set_major_formatter(formatter)
         if multiY:
             plt.legend() #ncol=5
 
