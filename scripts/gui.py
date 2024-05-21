@@ -5,12 +5,14 @@ __version__ = '2.81'
 _PY_VERSION = (3, 11)
 
 import os
+import sys
 import platform
 import time
 from datetime import datetime
 # import contextlib
 import tkinter as tk
-from PIL import Image, ImageTk
+if 'PIL' in sys.modules:
+    from PIL import Image, ImageTk
 from tkinter import ttk
 from threading import Thread
 import queue
