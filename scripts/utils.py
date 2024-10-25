@@ -64,11 +64,12 @@ class ProgressBar:
             currIdx [int]: Current index of progress, to be incremented up towards self.len'''
         currIdx += 1 #ensures progress bar finishes completely
         done = round(self.dispLen * currIdx / self.len)
-        if self.dispLen-done == 1:
-            sys.stdout.write("\r[%s]" % ('#' * (self.dispLen)) )  
-        else:
-            sys.stdout.write("\r[%s%s]" % ('#' * done, '.' * (self.dispLen-done)) )    
-        sys.stdout.flush()
+        if currIdx:
+            if self.dispLen-done == 1:
+                sys.stdout.write("\r[%s]" % ('#' * (self.dispLen)) )  
+            else:
+                sys.stdout.write("\r[%s%s]" % ('#' * done, '.' * (self.dispLen-done)) )    
+            sys.stdout.flush()
 
 def pause():
     '''Like os.system('pause') in Windows but with a newline'''
