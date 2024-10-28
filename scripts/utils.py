@@ -44,17 +44,19 @@ class printProgress:
 class ProgressBar:
     '''Progress bar, non blocking'''
     
-    def __init__(self, len, dispLen):
+    def __init__(self, len, dispLen, dispInit=True):
         '''Progress bar of significant percent updates
             Uses sys.stdout, may overwrite print()'s from other portions of program
         Args:
             len [int]: total length of loop to give progress updates on\n
-            dispLen [int]: total length (characters) of progress bar output
+            dispLen [int]: total length (characters) of progress bar output\n
+            dispInit [bool]: whether or not to display a blank progress bar before first call to update() 
         Notes:
             [####################..............................]
             [##################################################]'''
         self.len = len
         self.dispLen = dispLen
+        self.dispInit = dispInit
         self.lastPercent = 0
         self.update(-1) #gets corrected to 0 in update()
 
@@ -64,7 +66,7 @@ class ProgressBar:
             currIdx [int]: Current index of progress, to be incremented up towards self.len'''
         currIdx += 1 #ensures progress bar finishes completely
         done = round(self.dispLen * currIdx / self.len)
-        if currIdx:
+        if currIdx or self.dispInit:
             if self.dispLen-done == 1:
                 sys.stdout.write("\r[%s]" % ('#' * (self.dispLen)) )  
             else:
