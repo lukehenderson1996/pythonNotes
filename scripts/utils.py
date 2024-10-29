@@ -162,6 +162,20 @@ def humTimeAndTS():
     humReadTime = dateObj.strftime("%H:%M:%S.%f")[:-3]
     return humReadDate, humReadTime, timestamp 
 
+def elapsedTime(start):
+    '''Returns the ammount of hours/minutes/seconds that have passed since "start"\n
+    Time elapsed will be rounded to 3 digis for seconds, and int for others
+    Args:
+        start [float]: timestamp of when the event started
+    Return:
+        [tuple]: elapsedTimeHr [int], elapsedTimeMin [int], elapsedTimeSec [float]'''
+    elapsedTimeSec = time.time()-start
+    elapsedTimeMin = int(elapsedTimeSec/60)
+    elapsedTimeSec -= elapsedTimeMin*60
+    elapsedTimeHr  = int(elapsedTimeMin/60)
+    elapsedTimeMin -= elapsedTimeHr*60
+    return elapsedTimeHr, elapsedTimeMin, elapsedTimeSec
+
 def countFileLines(path):
     '''Fast way to count total lines in a file\n
     Args:
