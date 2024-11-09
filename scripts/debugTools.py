@@ -32,6 +32,14 @@ def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
     if not color=='normal':
         prefix = getattr(cl, color) + prefix
 
+    #pandas dataframe
+    if 'pandas' in sys.modules:
+        import pandas as pd
+        if isinstance(obj, pd.core.frame.DataFrame):
+            print('Obj is pandas dataframe:' '\n')
+            print(obj)
+            return
+
     #ctypes array
     if 'ctypes' in sys.modules:
         import ctypes
