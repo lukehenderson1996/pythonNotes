@@ -1,7 +1,7 @@
 '''plot.py: Plots data using seaborn and matplotlib'''
 
 # Author: Luke Henderson
-__version__ = '1.21'
+__version__ = '1.3'
 
 import math
 import time
@@ -10,11 +10,14 @@ import numpy as np
 from seaborn import scatterplot as sns_scatterplot
 from seaborn import lineplot as sns_lineplot
 from seaborn import histplot as sns_histplot
+from seaborn import boxplot as sns_boxplot
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
-from matplotlib.ticker import EngFormatter, FuncFormatter
+from matplotlib.ticker import EngFormatter, FuncFormatter, MaxNLocator
 import matplotlib
 # matplotlib.use('Agg')  # use the Agg backend (NON GUI)
+import pandas as pd
+
 
 import colors as cl
 import utils as ut
@@ -45,6 +48,32 @@ PLOT_COLORS = [
     "#FF002A", "#FF0064", "#FF9900", "#FFE600", "#FDFD00", "#FBFF00", "#B0FF00", "#66FF00", "#00FFEB", "#0049FF",
     "#0000A9", "#8300FF", "#D900FF", "#FF00BF", "#FF003F", "#FF5800", "#FFB200", "#FFF400", "#F6FF00", "#9FFF00"]
 
+MARKER_STYLES = [
+    '^',  # Triangle up
+    '*',  # Star
+    'o',  # Circle
+    'P',  # Plus (filled)
+    's',  # Square
+    '>',  # Triangle right
+    '<',  # Triangle left
+    'v',  # Triangle down
+    'p',  # Pentagon
+    'h',  # Hexagon
+    'H',  # Hexagon (filled)
+    '+',  # Plus
+    'x',  # X
+    'X',  # X (filled)
+    'D',  # Diamond
+    'd',  # Thin diamond
+    '|',  # Vertical line
+    '_',  # Horizontal line
+    '.',  # Point
+    ',',  # Pixel
+    '1',  # Tri down
+    '2',  # Tri up
+    '3',  # Tri left
+    '4'   # Tri right
+]
 
 def outerJoin(xListList, yListList):
     '''Combines data with different x value sets.\n
@@ -102,7 +131,81 @@ class PLOTTER:
                 format: 'myfolder' '''
         self.dataList = []
         self.subFolder = subFolder
-    
+
+
+    def boxPlot(self, x=None, y=None, multiY=None, multiLabels=None, title=None, 
+                xlabel=None, ylabel=None, engNotation=True):
+        '''Plots box plots for given data sets.
+        Args:
+            x [list of str]: List of categorical labels.
+            y [list of lists of float or int]: Data points grouped by x.
+            multiY [list of lists of lists of float or int]: Multiple groups of data points, each group corresponding to one x.
+            multiLabels [list of str]: Labels for each dataset in multiY.'''
+        
+        rcParams['figure.figsize'] = (5, 5)  # Adjust size as needed
+        
+        # Prepare the data for plotting
+        if multiY is not None:
+            data = []
+            categories = []
+            labels = []
+            for idx, label in enumerate(multiLabels):
+                for x_val, y_vals in zip(x, multiY[idx]):
+                    data.extend(y_vals)
+                    categories.extend([x_val] * len(y_vals))
+                    labels.extend([label] * len(y_vals))
+            plot_data = pd.DataFrame({'Category': categories, 'Data': data, 'Label': labels})
+            sns_boxplot(x='Category', y='Data', hue='Label', data=plot_data, showmeans=False, 
+                        palette=PLOT_COLORS[:len(multiLabels)], fill=False, width=0.7, gap=.2, legend='full')
+        else:
+            data = []
+            categories = []
+            for x_val, y_vals in zip(x, y):
+                data.extend(y_vals)
+                categories.extend([x_val] * len(y_vals))
+            plot_data = pd.DataFrame({'Category': categories, 'Data': data})
+            sns_boxplot(x='Category', y='Data', data=plot_data, showmeans=False, 
+                        palette=PLOT_COLORS[:len(x)], fill=False, width=0.7, gap=.2, legend='full')
+
+        plt.grid(True)
+        # Optional labeling
+        if title:
+            plt.title(title)
+        if xlabel:
+            plt.xlabel(xlabel)
+        if ylabel:
+            plt.ylabel(ylabel)
+
+        # Handling engineering notation for y-axis
+        if engNotation:
+            formatter = EngFormatter()
+            plt.gca().yaxis.set_major_formatter(formatter)
+
+        plt.xticks(range(len(x)), x)  # Set x-ticks to the categories of x
+
+        if multiY:
+            plt.legend()
+
+        #make y axis start at zero
+        plt.gca().set_ylim(bottom=0)
+
+        # # Double the number of y-axis ticks
+        # numTicks = len(plt.gca().get_yticks())
+        # plt.gca().yaxis.set_major_locator(MaxNLocator(nbins=numTicks * 2))
+
+        # Set y-axis to have 14 whole number ticks
+        plt.gca().yaxis.set_major_locator(MaxNLocator(nbins='auto', min_n_ticks=10, steps=[1, 2, 5, 10], integer=True))
+
+        # # Display plot
+        # plt.show()
+        # figStillOpen = plt.gcf()
+        # plt.clf()
+        # plt.close(figStillOpen)
+
+        return plt
+
+
+
     def hexFormat(self, x, pos):
         return f"0x{int(x):X}"
 
@@ -639,12 +742,36 @@ class OSCOPE:
 if __name__ == '__main__':
     cl.gn('Test Code Start')
 
-    xArr =  [0,1,2,3]
-    yArr1 = [5,6,7,8]
-    yArr2 = [8,7,6,5]
-    yArr3 = [4,4,4,4]
+    # xArr =  [0,1,2,3]
+    # yArr1 = [5,6,7,8]
+    # yArr2 = [8,7,6,5]
+    # yArr3 = [4,4,4,4]
 
+    # plotter = PLOTTER()
+    # plotter.genericPlot(x=xArr, multiY=[yArr1, yArr2, yArr3], 
+    #                     multiLabels=['Vth (3σ)', 'Typical', 'Vth (-3σ)'], title='Ron vs Vgs', 
+    #                     xlabel='Vgs (V)', ylabel='Rds (Ω)')
+
+
+
+    #test box plot
     plotter = PLOTTER()
-    plotter.genericPlot(x=xArr, multiY=[yArr1, yArr2, yArr3], 
-                        multiLabels=['Vth (3σ)', 'Typical', 'Vth (-3σ)'], title='Ron vs Vgs', 
-                        xlabel='Vgs (V)', ylabel='Rds (Ω)')
+    x = ['20°C', '25°C', '30°C', '35°C', '40°C']
+    y = [[22, 24, 21, 23, 25], [25, 27, 26, 28, 24], [30, 32, 31, 33, 29], [34, 36, 35, 37, 33], [39, 41, 40, 42, 38]]
+    # multiY = [
+    #     [[20, 22, 21, 23, 25], [23, 25, 24, 26, 22], [28, 30, 29, 31, 27], [32, 34, 33, 35, 31], [37, 39, 38, 40, 36]],
+    #     [[21, 23, 22, 24, 26], [24, 26, 25, 27, 23], [29, 31, 30, 32, 28], [33, 35, 34, 36, 32], [38, 40, 39, 41, 37]] ]
+    # multiY = [
+    #     [[20, 22, 21, 23, 25], [23, 25, 24, 26, 22], [28, 30, 29, 31, 27], [32, 34, 33, 35, 31], [37, 39, 38, 40, 36]],
+    #     [[26], [27], [31], [35], [40]] ]
+    # multiY = [
+    #     [[20, 22, 25], [23, 26, 22], [28, 30, 29], [32, 35, 31], [37, 40, 36]],
+    #     [[26], [27], [31], [35], [40]] ]
+    multiY = [
+        [[20, 25], [23, 22], [28, 29], [32, 31], [37, 36]],
+        [[26], [27], [31], [35], [40]] ]
+
+    
+    multiLabels = ['TT', 'Matrix (DGO FF)']
+
+    plotter.boxPlot(x=x, multiY=multiY, multiLabels=multiLabels, title="Temperature vs Measurements", xlabel="Temperature", ylabel="Measurement")
