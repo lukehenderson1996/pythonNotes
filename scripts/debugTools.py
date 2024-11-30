@@ -44,10 +44,22 @@ def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
     if 'ctypes' in sys.modules:
         import ctypes
         if isinstance(obj, ctypes.Array):
-            prStr = '\t' + 'Contents: [ '
-            for element in obj:
-                prStr += hex(element) + ' '
-            print(prStr + ']')
+            if isinstance(obj.value, bytes):
+                cont = obj.value.decode('utf-8')
+                print(f'{lb} is {cont}\t\t{type(obj)}')
+                return
+            else:
+                prStr = '\t' + 'Contents: [ '
+                for element in obj:
+                    prStr += hex(element) + ' '
+                print(prStr + ']')
+                return
+        if isinstance(obj, ctypes.c_char_p):
+            cont = obj.value.decode('utf-8')
+            print(f'{lb} is {cont}\t\t{type(obj)}')
+            return
+        if isinstance(obj, ctypes.c_uint32) or isinstance(obj, ctypes.c_long):
+            print(f'{lb} is {obj.value}\t\t{type(obj)}')
             return
 
     #numpy array numpy.ndarray
