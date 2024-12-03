@@ -189,10 +189,6 @@ class PLOTTER:
         #make y axis start at zero
         plt.gca().set_ylim(bottom=0)
 
-        # # Double the number of y-axis ticks
-        # numTicks = len(plt.gca().get_yticks())
-        # plt.gca().yaxis.set_major_locator(MaxNLocator(nbins=numTicks * 2))
-
         # Set y-axis to have 14 whole number ticks
         plt.gca().yaxis.set_major_locator(MaxNLocator(nbins='auto', min_n_ticks=10, steps=[1, 2, 5, 10], integer=True))
 
