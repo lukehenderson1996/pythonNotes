@@ -1,7 +1,7 @@
-'''Short description'''
+'''Name/Purpose/Description'''
 
 # Author: xxxxx 
-__version__ = '0.0'
+__version__ = '0.1'
 _PY_VERSION = (3, 11)
 
 'external imports here'
@@ -13,28 +13,30 @@ _PY_VERSION = (3, 11)
 #----------------------------------------------------------------init----------------------------------------------------------------
 #assert correct module versions 
 modV = {'modObj':   '1.0',
-        'modObj':   '3.22'}
+        'modObj':   '3.22',}
 for module in modV:
     errMsg = f'Expecting version {modV[module]} of "{os.path.basename(module.__file__)}". Imported {module.__version__}'
     assert module.__version__ == modV[module], errMsg
 
 CONSTANT_NAME = "constant's content"
 
-def internal_functions_here(arg1, arg2, optionalArg3='normal'):
-    '''Short description\n
+def internalFunctionsHere(arg1, arg2, optionalArg3='normal'):
+    '''Short description
     Args:
-        arg1 [str]: short description\n
-        arg2 [float]: short description\n
-        optionalArg3 [str, optional]: description
+        arg1 (str): short description
+        arg2 (float): short description
+        optionalArg3 (str, optional): description
+            typical input: short description
             typical input:
                 long description
-            typical input: short description
-    Return:
-        [int] 0 for pass
-    Notes:
+    Returns:
+        int: 0 for pass
+    Examples:
+        examples here
+    ## Notes:
         notes here'''
     pass
-    return 0
+
 
 #-------------------------------------------------------------main loop--------------------------------------------------------------
 
