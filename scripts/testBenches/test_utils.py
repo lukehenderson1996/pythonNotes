@@ -15,6 +15,8 @@ import utils as ut
 cl.gn('Program Start')
 progStart = time.time()
 
+#-------------------------------------------------------------test bench--------------------------------------------------------------
+
 #progress printout
 loopLength = 100
 pb = ut.printProgress(loopLength, 25)

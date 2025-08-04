@@ -23,6 +23,8 @@ class myClass():
         self.passedArg1 = argumentOne
         self.passedArg2 = argumentTwo
 
+#-------------------------------------------------------------test bench--------------------------------------------------------------
+
 #string
 cl.bl('Testing a simple string with color')
 dt.info('stringcontents', 'simpleObj')

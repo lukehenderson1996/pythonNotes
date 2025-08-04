@@ -28,6 +28,8 @@ COMMON_FONTS = ['Trebuchet MS', #fonts present in both Windows and Ubuntu 22 (af
 cl.gn('Program Start')
 progStart = time.time()
 
+#-------------------------------------------------------------test bench--------------------------------------------------------------
+
 guiQ = queue.Queue()
 dw = gui.GUI(guiQ, updateDelay=0.001, quiet=True, windowMax=True) 
 dw.start()

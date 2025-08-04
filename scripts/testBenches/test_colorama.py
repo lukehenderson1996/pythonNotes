@@ -4,6 +4,15 @@
 __version__ = '1.0'
 _PY_VERSION = (3, 11)
 
+import time
+
+import colors as cl
+
+cl.gn('Test Bench Start')
+progStart = time.time()
+
+#-------------------------------------------------------------test bench--------------------------------------------------------------
+
 # from colorama import init, Fore, Back, Style
 
 # # initialize colorama to work with Windows terminal

@@ -15,6 +15,8 @@ import logger as lg
 cl.gn('Program Start')
 progStart = time.time()
 
+#-------------------------------------------------------------test bench--------------------------------------------------------------
+
 # #simple logging case
 # sLog = lg.LOGGER(logCols=['Try Number', 'Profitability'])
 # sLog.simpLog([1, 1.05])
