@@ -1,6 +1,8 @@
-"""Test code for logger.py"""
+'''Test code for logger.py (validated for v)'''
 
-# Author: Luke Henderson 
+# Author: Luke Henderson
+__version__ = '1.0'
+_PY_VERSION = (3, 7)
 
 import os
 import time
@@ -10,8 +12,10 @@ import colors as cl
 import debugTools as dt
 import logger as lg
 
-cl.green('Program Start')
+cl.gn('Program Start')
 progStart = time.time()
+
+#-------------------------------------------------------------test bench--------------------------------------------------------------
 
 # #simple logging case
 # sLog = lg.LOGGER(logCols=['Try Number', 'Profitability'])

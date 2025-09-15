@@ -1,3 +1,9 @@
+'''Old gui code, block the main thread'''
+
+# Author: Luke Henderson
+__version__ = '1.0'
+_PY_VERSION = (3, 7)
+
 import os
 import time
 from datetime import datetime
@@ -9,10 +15,10 @@ import contextlib
 
 
 class GUI:
-    """Outer layer to drive App class"""
+    '''Outer layer to drive App class'''
 
     def __init__(self, windowTitle, updateDelay):
-        """Initialize the gui"""
+        '''Initialize the gui'''
         self.root = tk.Tk()
         self.app=App(self.root)
         self.app.updateDelay = updateDelay
@@ -21,7 +27,7 @@ class GUI:
 
     def runMain(self):
         #start loop
-        cl.blue('Successful start ' + cl.CMDCYAN + 'GUI')
+        cl.blue('Successful start ' + cl.CYAN + 'GUI')
         self.root.mainloop()
 
 class App(tk.Frame):

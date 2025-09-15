@@ -1,40 +1,44 @@
-'''Short description'''
+'''Name/Purpose/Description'''
 
 # Author: xxxxx 
-__version__ = '0.0'
+__version__ = '0.1'
+_PY_VERSION = (3, 11)
 
 'external imports here'
 
 'internal imports here'
 
-#init here
+'program start message here'
+
+#----------------------------------------------------------------init----------------------------------------------------------------
+#assert correct module versions here
 
 CONSTANT_NAME = "constant's content"
 
-def internal_functions_here(arg1, arg2, optionalArg3='normal'):
-    '''Short description\n
+def internalFunctionsHere(arg1, arg2, optionalArg3='normal'):
+    '''Short description
     Args:
-        arg1 [str]: short description\n
-        arg2 [float]: short description\n
-        optionalArg3 [str, optional]: description
+        arg1 (str): short description
+        arg2 (float): short description
+        optionalArg3 (str, optional): description
+            typical input: short description
             typical input:
                 long description
-            typical input: short description
-    Return:
-        [int] 0 for pass
-    Notes:
+    Returns:
+        int: 0 for pass
+    Examples:
+        examples here
+    ## Notes:
         notes here'''
     pass
-    return 0
 
 
+#-------------------------------------------------------------main loop--------------------------------------------------------------
 
-#main code here
-multiLineImplicit  = print(
-    '1 ' + '2 ' + 
-    '3 ' + '4')
+multiLineImplicit  = print('1 ' + '2 ' + 
+                           '3 ' + '4')
 
-multiLineExplicit = '1'   \
-    + '2' \
-    + '3' \
-    + '4'
+multiLineExplicit = '1' + \
+                    '2' + \
+                    '3' + \
+                    '4'

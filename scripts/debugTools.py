@@ -1,14 +1,15 @@
 '''Module to make debugging faster & easier'''
 
 # Author: Luke Henderson 
-__version__ = '3.21'
+__version__ = '3.22'
+_PY_VERSION = (3, 11)
 
 import sys
 
 import colors as cl
 
 def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
-    """Prints info about an object\n
+    '''Prints info about an object\n
     Args:
         obj [any]: the object to be analyzed\n
         lb [str, optional]: the label name of the object to be analyzed\n
@@ -18,27 +19,47 @@ def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
             keys
         color [str, optional]:
             uses colors.py constants to change printer color\n
-            example: use 'OKBLUE' for colors.OKBLUE
+            example: use 'BLUE' for colors.BLUE
     Notes:
         usage example: dt.info(myObj) or dt.info(myObj, 'myObj')
             assumed using "import debugTools as dt"
         advanced usage example:
-            dt.info(myObj, 'myObj', color='OKBLUE')
+            dt.info(myObj, 'myObj', color='BLUE')
         internal arguments are optional and normally just used for recursion
         supported libraries:
-            numpy, pprint, requests, ctypes"""
+            numpy, pprint, requests, ctypes'''
     prefix = '\t'*treeLevel + dictKey
     if not color=='normal':
         prefix = getattr(cl, color) + prefix
+
+    #pandas dataframe
+    if 'pandas' in sys.modules:
+        import pandas as pd
+        if isinstance(obj, pd.core.frame.DataFrame):
+            print('Obj is pandas dataframe:' '\n')
+            print(obj)
+            return
 
     #ctypes array
     if 'ctypes' in sys.modules:
         import ctypes
         if isinstance(obj, ctypes.Array):
-            prStr = '\t' + 'Contents: [ '
-            for element in obj:
-                prStr += hex(element) + ' '
-            print(prStr + ']')
+            if isinstance(obj.value, bytes):
+                cont = obj.value.decode('utf-8')
+                print(f'{lb} is {cont}\t\t{type(obj)}')
+                return
+            else:
+                prStr = '\t' + 'Contents: [ '
+                for element in obj:
+                    prStr += hex(element) + ' '
+                print(prStr + ']')
+                return
+        if isinstance(obj, ctypes.c_char_p):
+            cont = obj.value.decode('utf-8')
+            print(f'{lb} is {cont}\t\t{type(obj)}')
+            return
+        if isinstance(obj, ctypes.c_uint32) or isinstance(obj, ctypes.c_long):
+            print(f'{lb} is {obj.value}\t\t{type(obj)}')
             return
 
     #numpy array numpy.ndarray
@@ -107,10 +128,10 @@ def info(obj, lb='Object', treeLevel=0, dictKey='', color='normal'):
                     info(el, type(el), treeLevel=treeLevel+1)
     
     #ENDC to fix printing back to normal
-    print(cl.ENDC, end='', flush=True)
+    print(cl.EC, end='', flush=True)
 
 def dirInfo(obj, lb='Object', format='normal', treeLevel=0, color='normal'):
-    """Prints and analyzes dir() info about an object\n
+    '''Prints and analyzes dir() info about an object\n
     Args:
         label [str]: the label name of the object to be analyzed\n
         obj [any]: the object to be analyzed\n
@@ -119,7 +140,7 @@ def dirInfo(obj, lb='Object', format='normal', treeLevel=0, color='normal'):
             for recursive tabbing
         color [str, optional]:
             uses colors.py constants to change printer color\n
-            example: use 'OKBLUE' for colors.OKBLUE"""
+            example: use 'BLUE' for colors.BLUE'''
     prefix = '\t'*treeLevel
     if not color=='normal':
         prefix = getattr(cl, color) + prefix
@@ -146,17 +167,14 @@ def dirInfo(obj, lb='Object', format='normal', treeLevel=0, color='normal'):
         info(objElement, el, treeLevel=1, dictKey=el+': ')
     
     #ENDC to fix printing back to normal
-    print(cl.ENDC, end='', flush=True)
+    print(cl.EC, end='', flush=True)
 
 def pprintInfo(obj):
     '''Wrapper for pprint\n
     Args:
         obj [any]: object to pprint'''
-    if 'pprint' in sys.modules:
-        import pprint
-        pprint.pprint(obj)
-    else:
-        cl.red('Error, pprint not installed')
+    import pprint
+    pprint.pprint(obj)
 
 def genPyLiteral(obj, lb='myVar'):
     '''Converts and prints any object to pythonic literal code\n
@@ -165,7 +183,7 @@ def genPyLiteral(obj, lb='myVar'):
         lb [str, optional]:
     Usage: 
         print(ut.humTimeList())\n
-        cl.blue('printing literal obj: ')\n
+        cl.bl('printing literal obj: ')\n
         dt.genPyLiteral(obj, 'literalsName')
         '''
     print(f'{lb} = {objToLiteral(obj)}')
@@ -193,13 +211,23 @@ def objToLiteral(obj):
         return repr(obj)
 
 def sizeInfo(obj, label='Object', color='normal'):
+    '''Write to terminal information about size of object\n
+    Args:
+        obj [any]\n
+        label [str, optional]\n
+        color [str, optional]:
+            uses colors.py constants to change printer color\n
+            example: use 'BLUE' for colors.BLUE'''
     prefix = ''
     if not color=='normal':
         prefix = getattr(cl, color)
 
     print(prefix + f'{label} is using... (bytes) {sys.getsizeof(obj)}')
     #ENDC to fix printing back to normal
-    print(cl.ENDC, end='', flush=True)
+    print(cl.EC, end='', flush=True)
 
 def getSize(obj):
+    '''Get size of object
+    Return:
+        [int]'''
     return sys.getsizeof(obj)

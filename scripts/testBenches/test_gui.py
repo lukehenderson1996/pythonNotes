@@ -1,6 +1,8 @@
-"""Test code for gui.py"""
+'''Test code for gui.py (validated for v)'''
 
 # Author: Luke Henderson 
+__version__ = '1.0'
+_PY_VERSION = (3, 7)
 
 import os
 import time
@@ -23,8 +25,10 @@ COMMON_FONTS = ['Trebuchet MS', #fonts present in both Windows and Ubuntu 22 (af
         'Courier New',
         'Impact']
 
-cl.green('Program Start')
+cl.gn('Program Start')
 progStart = time.time()
+
+#-------------------------------------------------------------test bench--------------------------------------------------------------
 
 guiQ = queue.Queue()
 dw = gui.GUI(guiQ, updateDelay=0.001, quiet=True, windowMax=True) 

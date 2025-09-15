@@ -1,7 +1,8 @@
-"""Logger class with multiple output options and data handling tools"""
+'''Logger class with multiple output options and data handling tools'''
 
 # Author: Luke Henderson
-__version__ = '1.31'
+__version__ = '1.32'
+_PY_VERSION = (3, 11)
 
 import os
 import platform
@@ -13,48 +14,42 @@ import debugTools as dt
 import utils as ut
 
 METRIC_PREFIX_SCALE = {
-"f":-15,
-"p":-12,
-"n":-9,
-"u":-6,
-"m":-3,
-" ":0,
-"":0,
-"k":+3,
-"K":+3,
-"M":+6,
-"G":+9,
-"P":+12,
-"E":+15
-}
+    "f":-15,
+    "p":-12,
+    "n":-9,
+    "u":-6,
+    "m":-3,
+    " ":0,
+    "":0,
+    "k":+3,
+    "K":+3,
+    "M":+6,
+    "G":+9,
+    "P":+12,
+    "E":+15 }
 
 DEFAULT_HEADER = {
-'csv':'Date,Time,BTCUSD,Site\n',
-'xml':'<?xml version="1.0" encoding="UTF-8"?>\n<root>\n\n'
-}
+    'csv':'Date,Time,Data1,Data2\n',
+    'xml':'<?xml version="1.0" encoding="UTF-8"?>\n<root>\n\n' }
 DEFAULT_FILENAME = 'datalog'
 DEFAULT_FILENAME_CSV = 'csv log'
 DEFAULT_FILENAME_XML = 'xml log'
 
 class ResultData:
-    """data class for return of data in standard format
-    marks time of creation in multiple formats"""
+    '''data class for return of data in standard format
+    marks time of creation in multiple formats'''
     resultData : list
-    unit : str
-    site : str #website
     capTime : float
 
-    def __init__(self, resultData=None, unit="", site="", capTime=None):
-        """Short description\n
+    def __init__(self, resultData=None, capTime=None):
+        '''Short description\n
         Args:
             capTime [int, optional]: can save exact time of
-                data capture here"""
+                data capture here'''
         if not isinstance(resultData, list):
             self.resultData = [resultData]
         else:
             self.resultData = resultData
-        self.unit = unit
-        self.site = site
         if capTime is None:
             capTime = time.time()
         self.capTime = capTime
@@ -63,18 +58,18 @@ class ResultData:
         self.humReadDate = self.dateObj.strftime("20%y-%m-%d")
 
 class LOGGER:
-    """This logs data to disk with optional formatting
+    '''This logs data to disk with optional formatting
     Current methods in use:
         __init__() creates list of actives files
         simpLog() will create simple csv and xml logs, 
             depending on what's active
         xmlCheckTag() will verify correct xml tag format
         close() will close all files and finalize xml formatting
-        """
+        '''
 
     def __init__(self, logCols=None, prefix='', filename=None, quiet=True, \
         csv=False, xml=False, absPath=None, persistent=False):
-        """Logger with various output options\n
+        '''Logger with various output options\n
         Args:
             logCols [list of str]: populates the headers if not None\n
             filename [str, optional]: custom name of file to override default\n
@@ -90,7 +85,7 @@ class LOGGER:
                 or create unique files per run (False)
         Notes:
             Number of logCols must exacly equal length of list when\n
-            calling simpLog()"""
+            calling simpLog()'''
         self.logCols = logCols
         self.csv = csv
         self.xml = xml
@@ -102,6 +97,7 @@ class LOGGER:
             assert isinstance(logCols, list)
             for col in logCols:
                 assert isinstance(col, str)
+                assert not ',' in col
         assert isinstance(prefix, str)
         assert isinstance(filename, str) or filename==None
         assert isinstance(quiet, bool)
@@ -117,13 +113,13 @@ class LOGGER:
             sep = '/'
             incorrectSep = '\\'
         if prefix and incorrectSep in prefix:
-            # cl.red('Error (logger.py): Incorrect separator in prefix')
+            # cl.rd('Error (logger.py): Incorrect separator in prefix')
             prefix = ut.pth(prefix)
         if filename and incorrectSep in filename:
-            # cl.red('Error (logger.py): Incorrect separator in filename')
+            # cl.rd('Error (logger.py): Incorrect separator in filename')
             filename = ut.pth(filename)
         if absPath and incorrectSep in absPath:
-            # cl.red('Error (logger.py): Incorrect separator in absPath')
+            # cl.rd('Error (logger.py): Incorrect separator in absPath')
             absPath = ut.pth(absPath)
 
         #manage and open file(s)
@@ -153,7 +149,7 @@ class LOGGER:
                     filenameList[0] = DEFAULT_FILENAME_CSV
                 thisFilePath = ut.pth(f'/datalogs/{prefix + filenameList[0] + fileSuffix}.csv', 'rel1')
                 if not os.path.exists(os.path.dirname(thisFilePath)):
-                    cl.yellow(f"Warning (logger.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(thisFilePath)}")
+                    cl.yl(f"Warning (logger.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(thisFilePath)}")
                     os.makedirs(os.path.dirname(thisFilePath))
                 filePathList.append(thisFilePath)
             if xml:
@@ -161,14 +157,14 @@ class LOGGER:
                     filenameList[1] = DEFAULT_FILENAME_XML
                 thisFilePath = ut.pth(f'/datalogs/{prefix + filenameList[1] + fileSuffix}.xml', 'rel1')
                 if not os.path.exists(os.path.dirname(thisFilePath)):
-                    cl.yellow(f"Warning (logger.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(thisFilePath)}")
+                    cl.yl(f"Warning (logger.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(thisFilePath)}")
                     os.makedirs(os.path.dirname(thisFilePath))
                 filePathList.append(thisFilePath)
         else:
             #absolute path
             ut.pth(absPath)
             if not os.path.exists(os.path.dirname(absPath)):
-                cl.yellow(f"Warning (logger.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(absPath)}")
+                cl.yl(f"Warning (logger.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(absPath)}")
                 os.makedirs(os.path.dirname(absPath))
             filePathList = []
             filePathList.append(absPath)
@@ -177,7 +173,7 @@ class LOGGER:
         for el in filePathList:
             fileExt = el.split('.')[-1]
             if not (fileExt=='csv' or fileExt=='xml'):
-                cl.red('Error: Unsupported file extension: ' + fileExt)
+                cl.rd('Error: Unsupported file extension: ' + fileExt)
                 raise Exception
             thisFilePath = el
             appending = False
@@ -228,14 +224,14 @@ class LOGGER:
             elif isinstance(data[i], int) or isinstance(data[i], float):
                 data[i] = str(data[i])
             else:
-                cl.red(f'Error: unexpected data type in simpLog(): {data[i]} {type(data[i])}')
+                cl.rd(f'Error: unexpected data type in simpLog(): {data[i]} {type(data[i])}')
                 raise Exception
         #write to logs
         for el in self.fileList:
             if el.ext == 'csv':
                 #error checking
                 if len(data) != len(self.logCols):
-                    cl.red('Error: logger data length mismatch with logCols length')
+                    cl.rd('Error: logger data length mismatch with logCols length')
                     dt.info('self.logCols', self.logCols)
                     dt.info('data', data)
                     raise Exception
@@ -267,25 +263,6 @@ class LOGGER:
         else:
             print('correct args')
 
-    def chrisLog(self, testNum, resultData, testDesc='', notes='', scaleUnit=None) -> None:
-        """NOT CONVERTED TO LUKE'S CODE FORMAT
-        logs the test data to the screen and the log file"""
-        if notes == '': 
-            addComma = ''
-        else:
-            addComma = ','
-        if True:
-            if scaleUnit is not None:
-                self.scaleUnits(resultData, scaleUnit)
-            print(f'TN{testNum}-{testDesc}', resultData.resultData, f'{resultData.unit} {resultData.instr}{addComma} {notes}')
-            testDesc = f'"{testDesc}"' #add "" around string to deal with commas in the string
-            notes = f'"{notes}"' #add "" around string to deal with commas in the string
-            self.file.write(f'{testNum},{testDesc},{",".join([str(data) for data in resultData.resultData])},{resultData.unit},{resultData.instr},{notes},,{self.logValues.TEMP},{self.logValues.VCC},{self.logValues.PROG}\n')
-            for site in self.sites.onActiveSite():
-                if isinstance(resultData.resultData[site], bool): resultData.resultData[site] = int(resultData.resultData[site] == True) #convert True/False to 1/0 for spotfire
-                if resultData.resultData[site] is None: resultData.resultData[site] = "" #remove none from the starfish log and leave empty instead
-                self.file2.write(f'{testNum},{time.strftime("%x")},{time.strftime("%X")},{time.time()},{self.logValues.DeviceVersion},{self.logValues.UID+site},DeviceID,StarfishID,{site},{testDesc},{resultData.resultData[site]},{resultData.unit},{resultData.instr},{notes},,,{self.logValues.TEMP},{self.logValues.VCC},{self.logValues.PROG}\n')
-
     def xmlCheckTag(self, tagName) -> bool:
         '''Description\n
         Args:
@@ -303,11 +280,11 @@ class LOGGER:
             ret = False
         #final ruling
         if not ret:
-            cl.yellow(f'Warning: Incorrect XML tag: {tagName}')
+            cl.yl(f'Warning: Incorrect XML tag: {tagName}')
         return ret
 
     def scaleUnits(self, resultData, scaleUnit) -> None:
-        """scales data from the current unit to the scaleUnit"""
+        '''scales data from the current unit to the scaleUnit'''
         #find the scale factor for the scaling unit
         if len(scaleUnit) == 1 or \
           (len(scaleUnit) == 2 and scaleUnit.lower() == "hz") or \
@@ -369,7 +346,7 @@ class ManagedLog:
                 previously defined columns (self.logCols)'''
         humReadDate, humReadTime = ut.humTime()
         if humReadDate != self.prevLoggedDate:
-            cl.purple(f'Managed log: logging for new day, filename: {self.prefix}{humReadDate}.csv')
+            cl.pr(f'Managed log: logging for new day, filename: {self.prefix}{humReadDate}.csv')
             self.log = LOGGER(logCols=self.logCols, filename=f'{self.prefix}{humReadDate}', persistent=True)
         self.log.simpLog(dataInput)
         self.prevLoggedDate = humReadDate

@@ -1,7 +1,8 @@
-"""Miscellaneous assorted utilities"""
+'''Miscellaneous assorted utilities'''
 
 # Author: Luke Henderson
-__version__ = '1.41'
+__version__ = '1.5'
+_PY_VERSION = (3, 11)
 
 import sys
 import os
@@ -13,10 +14,10 @@ import colors as cl
 import debugTools as dt
 
 class printProgress:
-    """Simple percent of progress printout, non blocking"""
+    '''Simple percent of progress printout, non blocking'''
 
     def __init__(self, len, dispQty):
-        """Progress update of significant percent updates\n
+        '''Progress update of significant percent updates\n
         Args:
             len [int]: total length of loop to give progress updates on\n
             dispQty [int]: quantization of updates, example 5 -> every 5%
@@ -25,7 +26,7 @@ class printProgress:
         Usage:
             pb = ut.printProgress(len(lenSpot), 5)\n
             pb.update(inIdx)\n
-            print('Done!')"""
+            print('Done!')'''
         self.len = len
         self.dispQty = dispQty
         self.lastPercent = 0
@@ -41,19 +42,21 @@ class printProgress:
             self.lastPercent += self.dispQty
 
 class ProgressBar:
-    """Progress bar, non blocking"""
+    '''Progress bar, non blocking'''
     
-    def __init__(self, len, dispLen):
-        """Progress bar of significant percent updates
+    def __init__(self, len, dispLen, dispInit=True):
+        '''Progress bar of significant percent updates
             Uses sys.stdout, may overwrite print()'s from other portions of program
         Args:
             len [int]: total length of loop to give progress updates on\n
-            dispLen [int]: total length (characters) of progress bar output
+            dispLen [int]: total length (characters) of progress bar output\n
+            dispInit [bool]: whether or not to display a blank progress bar before first call to update() 
         Notes:
             [####################..............................]
-            [##################################################]"""
+            [##################################################]'''
         self.len = len
         self.dispLen = dispLen
+        self.dispInit = dispInit
         self.lastPercent = 0
         self.update(-1) #gets corrected to 0 in update()
 
@@ -63,30 +66,31 @@ class ProgressBar:
             currIdx [int]: Current index of progress, to be incremented up towards self.len'''
         currIdx += 1 #ensures progress bar finishes completely
         done = round(self.dispLen * currIdx / self.len)
-        if self.dispLen-done == 1:
-            sys.stdout.write("\r[%s]" % ('#' * (self.dispLen)) )  
-        else:
-            sys.stdout.write("\r[%s%s]" % ('#' * done, '.' * (self.dispLen-done)) )    
-        sys.stdout.flush()
+        if currIdx or self.dispInit:
+            if self.dispLen-done == 1:
+                sys.stdout.write("\r[%s]" % ('#' * (self.dispLen)) )  
+            else:
+                sys.stdout.write("\r[%s%s]" % ('#' * done, '.' * (self.dispLen-done)) )    
+            sys.stdout.flush()
 
 def pause():
     '''Like os.system('pause') in Windows but with a newline'''
     input('Press any key to continue . . .\n')
 
 def printBoolTable(inDict):
-    """Prints out contents/info of a large ammount of boolean values
+    '''Prints out contents/info of a large ammount of boolean values
         in a short format with 1's and 0's
     Args:
         inDict [dict]: must contain lists of bools, example:
-            {'key1':[],'key2':[]...} (string keys only)"""
+            {'key1':[],'key2':[]...} (string keys only)'''
     for key in inDict:
         boolStr = ''
         for el in inDict[key]:
             if el:
-                boolStr += cl.CMDCYAN + str(int(el))
+                boolStr += cl.CY + str(int(el))
             else:
-                boolStr += cl.HEADER + str(int(el))
-        print(key + ': [ ' + boolStr + cl.ENDC + f' ] len={len(inDict[key])}')
+                boolStr += cl.PR + str(int(el))
+        print(key + ': [ ' + boolStr + cl.EC + f' ] len={len(inDict[key])}')
 
 def dateStr(day) -> str:
     '''Converts day of month or month number int into two digit str\n
@@ -100,8 +104,9 @@ def dateStr(day) -> str:
         return str(day)
     
 def toTimeStamp(dateAndTimeStr):
-    '''input format: '2023-03-14 19:56:15.963'
-    '''
+    '''input format: '2023-03-14 19:56:15.963'\n
+    Args:
+        dateAndTimeStr [str]'''
     timeObj = datetime.strptime(dateAndTimeStr, '%Y-%m-%d %H:%M:%S.%f')
     return time.mktime(timeObj.timetuple()) + timeObj.microsecond / 1e6
 
@@ -156,6 +161,20 @@ def humTimeAndTS():
     humReadDate = dateObj.strftime("20%y-%m-%d")
     humReadTime = dateObj.strftime("%H:%M:%S.%f")[:-3]
     return humReadDate, humReadTime, timestamp 
+
+def elapsedTime(start):
+    '''Returns the ammount of hours/minutes/seconds that have passed since "start"\n
+    Time elapsed will be rounded to 3 digis for seconds, and int for others
+    Args:
+        start [float]: timestamp of when the event started
+    Return:
+        [tuple]: elapsedTimeHr [int], elapsedTimeMin [int], elapsedTimeSec [float]'''
+    elapsedTimeSec = time.time()-start
+    elapsedTimeMin = int(elapsedTimeSec/60)
+    elapsedTimeSec -= elapsedTimeMin*60
+    elapsedTimeHr  = int(elapsedTimeMin/60)
+    elapsedTimeMin -= elapsedTimeHr*60
+    return elapsedTimeHr, elapsedTimeMin, elapsedTimeSec
 
 def countFileLines(path):
     '''Fast way to count total lines in a file\n
@@ -217,14 +236,14 @@ def winCurrHandle():
         for item in windowsList:
             if 'niceHash' in item[0] and 'ConsoleWindowClass' in item[1]:
                 if AlreadyFound:
-                    cl.red(f'Error (utils.py): Multiple window hanldes found for file "{filename}"')
+                    cl.rd(f'Error (utils.py): Multiple window hanldes found for file "{filename}"')
                     exit()
                 else:
                     AlreadyFound = True
                     className = item[1]
                     windowName = item[0]
         if windowName is None or className is None:
-            cl.red(f'Error (utils.py): Window hanlde not found for file "{filename}"')
+            cl.rd(f'Error (utils.py): Window hanlde not found for file "{filename}"')
             exit()
 
         hwnd = win32gui.FindWindow(className, windowName)
@@ -249,9 +268,9 @@ def winFocus(hwnd):
             time.sleep(.1)
             win32gui.SetForegroundWindow(hwnd)
         except pywintypes.error: 
-            cl.yellow('Warning: utils.py unable to focus cmd window')
+            cl.yl('Warning: utils.py unable to focus cmd window')
     else:
-        cl.yellow("This machine is not running Windows, will skip focus utility")
+        cl.yl("This machine is not running Windows, will skip focus utility")
 
 def listConv(listOfDict):
     '''Converts list of dictionaries to dictionary of lists\n
@@ -266,13 +285,28 @@ def listConv(listOfDict):
                 ret[key] = []
             ret[key].append(value)
     return ret
+
+def dictConv(dictOfList):
+    '''Converts dictionary of lists to list of dictionaries.\n
+    Internal lists must be of the same length\n
+    Args:
+        dictOfList [dict of lists]: 
+    Return:
+        [list] list of dicts'''
+    ret = []
+    listLenList = [len(item) for item in dictOfList.values()]
+    listLen = max(listLenList)
+    for i in range(listLen):
+        thisDict = {key: dictOfList[key][i] for key in dictOfList}
+        ret.append(thisDict)
+    return ret
     
 def pth(path, mode='abs'):
     '''Platform-aware file path converter \n
     Args:
         path [str]: filepath to be converted \n
         mode [str, optional]: mode to run \n
-            'abs': absolute path mode \n
+            'abs': absolute path mode (default) \n
             'rel0': relative path mode (normal) \n
             'rel1': relative path mode (up one directory) \n
             'rel2': relative path mode (up 2 directories)
@@ -282,7 +316,7 @@ def pth(path, mode='abs'):
         relative paths must start with separator: '/subfolder1/subfolder2' '''
     #input parameter validation
     if not isinstance(path, str):
-        cl.red('Error (utils.py): path is not string')
+        cl.rd('Error (utils.py): path is not string')
         dt.info(path, 'path')
         exit()
     #convert filepath
@@ -291,15 +325,15 @@ def pth(path, mode='abs'):
     if plat == "Windows":
         if len(path) >= 6:
             if path[:4]=='home' or path[:6]=='/home/' or path[:6]=='\\home\\':
-                cl.yellow(f'Warning (utils.py): Incorrect absolute path "{path}" for platform "{plat}"')
+                cl.yl(f'Warning (utils.py): Incorrect absolute path "{path}" for platform "{plat}"')
         fixedPath = path.replace('/', '\\')
     elif plat == "Linux":
         if len(path) >= 3:
             if path[:2]=='C:' or path[:3]=='\\C:' or path[:3]=='/C:':
-                cl.yellow(f'Warning (utils.py): Incorrect absolute path "{path}" for platform "{plat}"')
+                cl.yl(f'Warning (utils.py): Incorrect absolute path "{path}" for platform "{plat}"')
         fixedPath = path.replace('\\', '/')
     else:
-        cl.red('Error (utils.py): Platform not supported')
+        cl.rd('Error (utils.py): Platform not supported')
         dt.info(plat, 'platform')
         exit()
     #rel mode
@@ -314,15 +348,15 @@ def pth(path, mode='abs'):
         if fixedPath[0]=='/' or fixedPath[0]=='\\':
             pass
         else:
-            cl.red(f'Error (utils.py): Relative paths must start with separator: "{fixedPath}"')
+            cl.rd(f'Error (utils.py): Relative paths must start with separator: "{fixedPath}"')
             exit()
         fixedPath = baseDir + fixedPath
     #final error handling
     if '//' in fixedPath or '\\\\' in fixedPath:
-        cl.red(f'Error (utils.py): Conveted filepath contains doubled separators: "{fixedPath}"')
+        cl.rd(f'Error (utils.py): Conveted filepath contains doubled separators: "{fixedPath}"')
         exit()
     if fixedPath == None:
-        cl.red(f'Error (utils.py): fixedPath is None')
+        cl.rd(f'Error (utils.py): fixedPath is None')
         exit()
     return fixedPath
 
@@ -341,7 +375,20 @@ def gpth(path, mode='abs'):
         relative paths must start with separator: '/subfolder1/subfolder2' '''
     fixedPath = pth(path, mode)
     if not os.path.exists(os.path.dirname(fixedPath)):
-        cl.yellow(f"Warning (utils.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(fixedPath)}")
+        cl.yl(f"Warning (utils.py): Directory doesn't exist. Creating subfolder(s) for directory {os.path.dirname(fixedPath)}")
         os.makedirs(os.path.dirname(fixedPath))
     return fixedPath
     
+def checkModV(modV):
+    '''Verifies that the module version matches expectation in dictionary
+    Args:
+        modV (dict): dictionary of modules and expected versions
+    Returns:
+        int: 0 for pass
+    Examples:
+        modV = {cl:   '1.0',
+                dt:   '3.22',}
+        ut.checkModV(modV)'''
+    for module in modV:
+        errMsg = f'Expecting version {modV[module]} of "{os.path.basename(module.__file__)}". Imported {module.__version__}'
+        assert module.__version__ == modV[module], errMsg

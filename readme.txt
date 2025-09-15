@@ -1,5 +1,36 @@
 Python Notes written by Luke Henderson
 
+Required imports:
+pip install pillow
+
+Recomended:
+pip install numpy
+
+How????
+pip install win32gui
+pip install pywintypes
+
+Table of contents:
+    pics: gui documentation info, gui icons can be stored here, etc
+    .gitignore: tells git to ignore datalogs and compiled python files
+    readme.txt
+    scripts:
+        archive: outdated/deprecated code or reference material
+        formatting: standard formatting advice and templates for Luke's projects
+        testBenches: unfinished testbench suite
+        run scripts.bat: batch file that opens a clean command prompt to run python with
+        shortTest.py: template to help with quick debugging if needed
+
+        colors.py: print to cmd line in color
+        debugTools.py: look into objects and data structures
+        gui: simple threaded gui with easy API
+        logger.py: logging wrapper for scientific style saving of results to disk
+        plot.py: seaborn (matplotlib) wrapper with easy API
+        utils.py: various assorted macros and utilities
+            
+
+
+
 BUGS:
 general
     use type checking/click lower right hand corer {} to turn it on in a .py file
@@ -23,30 +54,4 @@ gui:
 Periodic code audit:
     verify each function never assigns to an inputted object without object.copy(), unless that's the intent.
 
-Table of contents:
-pythonNotes git repo
-    datalogs: data logs stored here
-    .gitignore: tells git to ignore datalogs and compiled python files
-    code-workspace: for VS code
-    readme.txt
-    scripts:
-        custom modules to help:
-            logger help: contains formatting templates for datalogs
-            colors.py: print to cmd line in color
-            debugTools.py: look into objects and data structures
-            gui: not finished
-        logger help (folder)
-            contains templates for datalogging
-        formatting help:
-            formatting.py: Luke's formatting for a main python file
-            formattingModule: Luke's formatting for a sub python file (module)
-        tutorial.py: simple examples
-        test modules for advanced examples
-            test_[module name]
-        
 
-
-Adding python path:
-add SYSTEM environmental variable call PYTHONPATH, equal to C:\ASC\SENSING\CSPS\hwdriver\scripts
-Press OK and restart your computer for the changes to take effect
-will work for both VS code and python from cmd

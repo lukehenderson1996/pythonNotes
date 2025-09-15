@@ -1,6 +1,8 @@
 '''Difference between available fonts in Ubuntu 22 vs Windows 10 (Ubuntu install has had microsoft fonts installed)'''
 
 # Author: Luke Henderson
+__version__ = '1.0'
+_PY_VERSION = (3, 7)
 
 import os
 import time
@@ -10,7 +12,7 @@ import colors as cl
 import debugTools as dt
 import logger as lg
 
-cl.green('Program Start')
+cl.gn('Program Start')
 progStart = time.time()
 
 

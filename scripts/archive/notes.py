@@ -1,19 +1,8 @@
-#threading and GUI:
+'''Python notes'''
 
-# https://stackoverflow.com/questions/8309902/are-python-instance-variables-thread-safe
-# You can use Locks, RLocks, Semaphores, Conditions, Events and Queues.
-# And this article helped me a lot.
-# http://www.laurentluce.com/posts/python-threads-synchronization-locks-rlocks-semaphores-conditions-events-and-queues/
-
-
-
-
-
-
-
-
-
-
+# Author: Luke Henderson
+__version__ = '1.1'
+_PY_VERSION = (3, 11)
 
 
 fruits = ["loquat", "jujube", "pear", "watermelon", "apple"]
