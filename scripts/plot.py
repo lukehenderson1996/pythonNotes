@@ -2,6 +2,7 @@
 
 # Author: Luke Henderson
 __version__ = '1.3'
+_PY_VERSION = (3, 11)
 
 import math
 import time

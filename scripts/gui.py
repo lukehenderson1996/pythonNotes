@@ -12,7 +12,7 @@ from datetime import datetime
 # import contextlib
 import tkinter as tk
 if 'PIL' in sys.modules:
-    from PIL import Image, ImageTk
+    from PIL import Image, ImageTk #pip install pillow
 from tkinter import ttk
 from threading import Thread
 import queue

@@ -8,6 +8,8 @@ _PY_VERSION = (3, 11)
 
 'internal imports here'
 
+#assert correct module versions here
+
 class NAME: #or, ClassName
     '''NAME class'''
     internalConstant = 2e-6
@@ -31,14 +33,25 @@ class NAME: #or, ClassName
         self.internalVariable = 'variable content'
         pass
 
-    def init(self):
-        '''non-automatic init'''
+    def init(self, arg1):
+        '''Non-automatic init
+        Args:
+            arg1 (int): description'''
         pass
 
     def _internalFunction(self, arg1):
+        '''Short description
+        Args:
+            arg1 (int): description'''
         pass
 
     def publicFunction(self, arg1, arg2) -> float:
+        '''Short description
+        Args:
+            arg1 (int): description
+            arg2 (str): description
+        Returns:
+            int: description'''
         return 2.3
     
 

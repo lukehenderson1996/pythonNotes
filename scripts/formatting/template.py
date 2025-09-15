@@ -9,17 +9,15 @@ import os
 
 import colors as cl
 import debugTools as dt
+import utils as ut
 
 cl.gn('Program Start')
 progStart = time.time()
 
 #----------------------------------------------------------------init----------------------------------------------------------------
-#assert correct module versions 
-modV = {cl:   '1.0',
-        dt:   '3.22',}
-for module in modV:
-    errMsg = f'Expecting version {modV[module]} of "{os.path.basename(module.__file__)}". Imported {module.__version__}'
-    assert module.__version__ == modV[module], errMsg
+#assert correct module versions
+ut.checkModV({cl:   '1.0',
+              dt:   '3.22',})
 
 #-------------------------------------------------------------main loop--------------------------------------------------------------
 

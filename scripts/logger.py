@@ -2,7 +2,7 @@
 
 # Author: Luke Henderson
 __version__ = '1.32'
-_PY_VERSION = (3, 7)
+_PY_VERSION = (3, 11)
 
 import os
 import platform
@@ -29,7 +29,7 @@ METRIC_PREFIX_SCALE = {
     "E":+15 }
 
 DEFAULT_HEADER = {
-    'csv':'Date,Time,BTCUSD,Site\n',
+    'csv':'Date,Time,Data1,Data2\n',
     'xml':'<?xml version="1.0" encoding="UTF-8"?>\n<root>\n\n' }
 DEFAULT_FILENAME = 'datalog'
 DEFAULT_FILENAME_CSV = 'csv log'
@@ -39,11 +39,9 @@ class ResultData:
     '''data class for return of data in standard format
     marks time of creation in multiple formats'''
     resultData : list
-    unit : str
-    site : str #website
     capTime : float
 
-    def __init__(self, resultData=None, unit="", site="", capTime=None):
+    def __init__(self, resultData=None, capTime=None):
         '''Short description\n
         Args:
             capTime [int, optional]: can save exact time of
@@ -52,8 +50,6 @@ class ResultData:
             self.resultData = [resultData]
         else:
             self.resultData = resultData
-        self.unit = unit
-        self.site = site
         if capTime is None:
             capTime = time.time()
         self.capTime = capTime
@@ -266,25 +262,6 @@ class LOGGER:
             print('incorrect args')
         else:
             print('correct args')
-
-    def chrisLog(self, testNum, resultData, testDesc='', notes='', scaleUnit=None) -> None:
-        '''NOT CONVERTED TO LUKE'S CODE FORMAT
-        logs the test data to the screen and the log file'''
-        if notes == '': 
-            addComma = ''
-        else:
-            addComma = ','
-        if True:
-            if scaleUnit is not None:
-                self.scaleUnits(resultData, scaleUnit)
-            print(f'TN{testNum}-{testDesc}', resultData.resultData, f'{resultData.unit} {resultData.instr}{addComma} {notes}')
-            testDesc = f'"{testDesc}"' #add "" around string to deal with commas in the string
-            notes = f'"{notes}"' #add "" around string to deal with commas in the string
-            self.file.write(f'{testNum},{testDesc},{",".join([str(data) for data in resultData.resultData])},{resultData.unit},{resultData.instr},{notes},,{self.logValues.TEMP},{self.logValues.VCC},{self.logValues.PROG}\n')
-            for site in self.sites.onActiveSite():
-                if isinstance(resultData.resultData[site], bool): resultData.resultData[site] = int(resultData.resultData[site] == True) #convert True/False to 1/0 for spotfire
-                if resultData.resultData[site] is None: resultData.resultData[site] = "" #remove none from the starfish log and leave empty instead
-                self.file2.write(f'{testNum},{time.strftime("%x")},{time.strftime("%X")},{time.time()},{self.logValues.DeviceVersion},{self.logValues.UID+site},DeviceID,StarfishID,{site},{testDesc},{resultData.resultData[site]},{resultData.unit},{resultData.instr},{notes},,,{self.logValues.TEMP},{self.logValues.VCC},{self.logValues.PROG}\n')
 
     def xmlCheckTag(self, tagName) -> bool:
         '''Description\n

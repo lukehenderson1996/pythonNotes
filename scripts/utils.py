@@ -379,3 +379,16 @@ def gpth(path, mode='abs'):
         os.makedirs(os.path.dirname(fixedPath))
     return fixedPath
     
+def checkModV(modV):
+    '''Verifies that the module version matches expectation in dictionary
+    Args:
+        modV (dict): dictionary of modules and expected versions
+    Returns:
+        int: 0 for pass
+    Examples:
+        modV = {cl:   '1.0',
+                dt:   '3.22',}
+        ut.checkModV(modV)'''
+    for module in modV:
+        errMsg = f'Expecting version {modV[module]} of "{os.path.basename(module.__file__)}". Imported {module.__version__}'
+        assert module.__version__ == modV[module], errMsg
